@@ -95,7 +95,7 @@ int lista_encontra(Lista *lista, void *alvo,
 
 void lista_ordena(Lista *lista, int (*cmpElem)(const void *, const void *)) {
     gcmpval = cmpElem;
-    qsort(lista->arr, lista->qtd, __SIZEOF_POINTER__, (__compar_fn_t)&ptrvalcmp);
+    qsort(lista->arr, lista->qtd, __SIZEOF_POINTER__, (cmp_fn)&ptrvalcmp);
     gcmpval = NULL;
 }
 
