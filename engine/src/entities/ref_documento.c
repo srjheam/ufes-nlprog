@@ -23,3 +23,9 @@ void refdoc_dispose(RefDocumento *refdoc) { free(refdoc); }
 RefDocumento *refdoc_cpy(RefDocumento *refdoc) {
     return refdoc_init(refdoc->idDocumento, refdoc->freqPalavra, refdoc->tfIdf);
 }
+
+int refdoc_get_id(RefDocumento *refdoc) { return refdoc->idDocumento; }
+
+int refdoc_get_freq(RefDocumento *refdoc) { return refdoc->freqPalavra; }
+
+float refdoc_get_tdIdf(RefDocumento *refdoc) { return refdoc->tfIdf; }
