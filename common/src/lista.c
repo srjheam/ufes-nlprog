@@ -28,7 +28,7 @@ Lista *lista_init() {
     return lista;
 }
 
-void lista_free(Lista *lista, void (*liberaElem)(void *)) {
+void lista_dispose(Lista *lista, void (*liberaElem)(void *)) {
     for (int i = 0; i < lista->qtd; i++)
         (*liberaElem)(lista->arr[i]);
 
@@ -55,7 +55,7 @@ void *lista_get_elemento(Lista *lista, int i) {
     return lista->arr[i];
 }
 
-void lista_adiciona(Lista *lista, void *elem) {
+void lista_push(Lista *lista, void *elem) {
     if (lista->qtd == lista->capacidade) {
         lista->capacidade += ritmo_crescimento_lista;
         lista->arr =
@@ -73,7 +73,8 @@ void *lista_pop(Lista *lista) {
         lista->arr =
             realloc(lista->arr, lista->capacidade * __SIZEOF_POINTER__);
         if (lista->arr)
-            exception_throw_OutOfMemory("Lista internal arr down realloc failed");
+            exception_throw_OutOfMemory(
+                "Lista internal arr down realloc failed");
     }
 
     void *r = lista->arr[lista->qtd - 1];
@@ -84,7 +85,7 @@ void *lista_pop(Lista *lista) {
 }
 
 int lista_encontra(Lista *lista, void *alvo,
-                  int (*cmpElem)(const void *, const void *)) {
+                   int (*cmpElem)(const void *, const void *)) {
     int n = lista_get_quantidade(lista);
     for (int i = 0; i < n; i++)
         if (cmpElem(lista->arr[i], alvo) == 0)
@@ -109,7 +110,7 @@ Lista *lista_copia(const Lista *lista, void *(*cpyelem)(const void *)) {
             exception_throw_OutOfMemory(
                 "Lista internal lista_copia cpyelem failed");
 
-        lista_adiciona(cpy, cpye);
+        lista_push(cpy, cpye);
     }
 
     return cpy;

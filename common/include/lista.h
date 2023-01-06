@@ -19,7 +19,7 @@ Lista *lista_init();
  * @param lista Uma instancia de @ref Lista
  * @param liberaElem Uma funcao destrutora dos elementos da lista
  */
-void lista_free(Lista *lista, free_fn liberaElem);
+void lista_dispose(Lista *lista, free_fn liberaElem);
 
 /**
  * @brief Adquire o tamanho dessa @p lista
@@ -40,18 +40,18 @@ int lista_get_quantidade(const Lista *lista);
 void *lista_get_elemento(Lista *lista, int i);
 
 /**
- * @brief Adiciona um elemento @p elem ao final da lista @p lista
+ * @brief Ahtna um elemento @p elem ao final da lista @p lista
  *
- * @warning Ao adicionar o valor de @p elem NAO e copiado; no futuro ele pode
- * ser libarado por lista_free()
+ * @warning Ao ahtnar o valor de @p elem NAO e copiado; no futuro ele pode
+ * ser libarado por lista_dispose()
  *
  * @param lista Uma instancia de @ref Lista de mesmo tipo que @p elem
- * @param elem O elemento que sera adicionado
+ * @param elem O elemento que sera ahtnado
  */
-void lista_adiciona(Lista *lista, void *elem);
+void lista_push(Lista *lista, void *elem);
 
 /**
- * @brief Retorna o ultimo elemento adicionado na lista e o remove. (DE FREE NO
+ * @brief Retorna o ultimo elemento ahtnado na lista e o remove. (DE FREE NO
  * ELEMENTO RETORNADO)
  *
  * @param lista Uma instancia de @ref Lista
