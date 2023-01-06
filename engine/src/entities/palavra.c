@@ -7,7 +7,7 @@
 
 struct tPalavra {
     int id;
-    char *conteudo; // Palavra da palavra
+    char *conteudo;       // Palavra da palavra
     Lista *refDocumentos; // Lista<RefDocumento>
 };
 
@@ -28,4 +28,12 @@ void palavra_dispose(Palavra *palavra) {
     lista_dispose(palavra->refDocumentos, (free_fn)&refdoc_dispose);
 
     free(palavra);
+}
+
+int palavra_get_id(Palavra *palavra) { return palavra->id; }
+
+char *palavra_get_conteudo(Palavra *palavra) { return palavra->conteudo; }
+
+Lista *palavra_get_refDocumentos(Palavra *palavra) {
+    return palavra->refDocumentos;
 }
