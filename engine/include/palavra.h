@@ -7,6 +7,6 @@ typedef struct tPalavra Palavra;
 
 Palavra *palavra_init(int id, const char *conteudo, const Lista *refDocumentos);
 
-Palavra *palavra_dispose(Palavra *palavra);
+void palavra_dispose(Palavra *palavra);
 
 #endif
