@@ -21,3 +21,9 @@ void refpalavra_dispose(RefPalavra *refpalavra) { free(refpalavra); }
 RefPalavra *refpalavra_cpy(RefPalavra *refpalavra) {
     return refpalavra_init(refpalavra->idPalavra, refpalavra->freqPalavra);
 }
+
+int refpalavra_get_id(RefPalavra *refpalavra) { return refpalavra->idPalavra; }
+
+int refpalavra_get_freq(RefPalavra *refpalavra) {
+    return refpalavra->freqPalavra;
+}

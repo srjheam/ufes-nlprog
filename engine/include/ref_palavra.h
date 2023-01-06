@@ -9,4 +9,8 @@ void refpalavra_dispose(RefPalavra *refpalavra);
 
 RefPalavra *refpalavra_cpy(RefPalavra *refpalavra);
 
+int refpalavra_get_id(RefPalavra *refpalavra);
+
+int refpalavra_get_freq(RefPalavra *refpalavra);
+
 #endif
