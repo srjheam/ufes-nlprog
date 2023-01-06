@@ -32,3 +32,11 @@ void doc_dispose(Documento *doc) {
 
     free(doc);
 }
+
+int doc_get_id(Documento *doc) { return doc->id; }
+
+char *doc_get_arquivo(Documento *doc) { return doc->arquivo; }
+
+char *doc_get_classe(Documento *doc) { return doc->classe; }
+
+Lista *doc_get_refPalavras(Documento *doc) { return doc->refPalavras; }
