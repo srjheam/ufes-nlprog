@@ -17,7 +17,7 @@ Palavra *palavra_init(int id, const char *conteudo,
 
     palavra->id = id;
     palavra->conteudo = strdup(conteudo);
-    palavra->refDocumentos = lista_copia(refDocumentos, (cpy_fn)&refdoc_cpy);
+    palavra->refDocumentos = lista_cpy(refDocumentos);
 
     return palavra;
 }
@@ -25,7 +25,7 @@ Palavra *palavra_init(int id, const char *conteudo,
 void palavra_dispose(Palavra *palavra) {
     free(palavra->conteudo);
 
-    lista_dispose(palavra->refDocumentos, (free_fn)&refdoc_dispose);
+    lista_dispose(palavra->refDocumentos);
 
     free(palavra);
 }

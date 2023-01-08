@@ -19,7 +19,7 @@ Documento *doc_init(int id, const char *arquivo, const char *classe,
     doc->id = id;
     doc->arquivo = strdup(arquivo);
     doc->classe = strdup(classe);
-    doc->refPalavras = lista_copia(refPalavras, (cpy_fn)&refpalavra_cpy);
+    doc->refPalavras = lista_cpy(refPalavras);
 
     return doc;
 }
@@ -28,7 +28,7 @@ void doc_dispose(Documento *doc) {
     free(doc->arquivo);
     free(doc->classe);
 
-    lista_dispose(doc->refPalavras, (free_fn)&refpalavra_dispose);
+    lista_dispose(doc->refPalavras);
 
     free(doc);
 }
