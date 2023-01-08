@@ -49,4 +49,12 @@ const void *kvp_get_value(const KeyValuePair *pair);
  */
 void **kvp_ptr_value(KeyValuePair *pair);
 
+/**
+ * @brief Efetua uma copia do @ref KeyValuePair* @p kvp
+ *
+ * @param kvp O @ref KeyValuePair* 
+ * @return KeyValuePair* Uma nova instancia de @ref KeyValuePair* identica à original
+ */
+KeyValuePair *kvp_cpy(KeyValuePair *kvp);
+
 #endif

@@ -8,18 +8,20 @@ typedef struct tLista Lista;
 /**
  * @brief Inicializa dinamicamente uma @ref Lista
  *
+ * @param cpyelem Ponteiro para funcao que copia um elemento e retorna sua nova
+ * instancia
+ * @param liberaElem Uma funcao destrutora dos elementos da lista
  * @return Lista* Uma nova instancia de @ref Lista
  */
-Lista *lista_init();
+Lista *lista_init(cpy_fn cpyelem, free_fn liberaElem);
 
 /**
  * @brief Libera a @p lista e todos os seus elementos da memória em que foram
  * dinamicamente alocados
  *
  * @param lista Uma instancia de @ref Lista
- * @param liberaElem Uma funcao destrutora dos elementos da lista
  */
-void lista_dispose(Lista *lista, free_fn liberaElem);
+void lista_dispose(Lista *lista);
 
 /**
  * @brief Adquire o tamanho dessa @p lista
@@ -83,10 +85,8 @@ void lista_ordena(Lista *lista, cmp_fn cmpElem);
  * @brief Efetua uma copia da @ref Lista* @p lista e de seus elementos
  *
  * @param lista A @ref Lista*
- * @param cpyelem Ponteiro para funcao que copia um elemento e retorna sua nova
- * instancia
  * @return Lista* Uma nova instancia de @ref Lista* identica a original
  */
-Lista *lista_copia(const Lista *lista, cpy_fn cpyelem);
+Lista *lista_cpy(const Lista *lista);
 
 #endif

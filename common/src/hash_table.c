@@ -19,7 +19,7 @@ HashTable *ht_init(cmp_fn comparadorChaves, free_fn liberaChaves,
     if (ht == NULL)
         exception_throw_OutOfMemory("HashTable malloc failed");
 
-    ht->pares = lista_init(ht->pares);
+    ht->pares = lista_init((cpy_fn)&kvp_cpy, (free_fn)&kvp_dispose);
     ht->comparadorChaves = comparadorChaves;
     ht->liberaChaves = liberaChaves;
     ht->liberaValores = liberaValores;
@@ -28,7 +28,7 @@ HashTable *ht_init(cmp_fn comparadorChaves, free_fn liberaChaves,
 }
 
 void ht_dispose(HashTable *ht) {
-    lista_dispose(ht->pares, (free_fn)&kvp_dispose);
+    lista_dispose(ht->pares);
 
     free(ht);
 }

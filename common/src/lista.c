@@ -10,9 +10,11 @@ struct tLista {
     int capacidade;
     int qtd;
     void **arr;
+    free_fn liberaElem;
+    cpy_fn cpyelem;
 };
 
-Lista *lista_init() {
+Lista *lista_init(cpy_fn cpyelem, free_fn liberaElem) {
     Lista *lista = malloc(sizeof *lista);
     if (lista == NULL)
         exception_throw_OutOfMemory("Lista malloc failed");
@@ -25,12 +27,15 @@ Lista *lista_init() {
     if (lista->arr == NULL)
         exception_throw_OutOfMemory("Lista internal arr malloc failed");
 
+    lista->liberaElem = liberaElem;
+    lista->cpyelem = cpyelem;
+
     return lista;
 }
 
-void lista_dispose(Lista *lista, void (*liberaElem)(void *)) {
+void lista_dispose(Lista *lista) {
     for (int i = 0; i < lista->qtd; i++)
-        (*liberaElem)(lista->arr[i]);
+        (*lista->liberaElem)(lista->arr[i]);
 
     free(lista->arr);
 
@@ -84,8 +89,7 @@ void *lista_pop(Lista *lista) {
     return r;
 }
 
-int lista_encontra(Lista *lista, void *alvo,
-                   int (*cmpElem)(const void *, const void *)) {
+int lista_encontra(Lista *lista, void *alvo, cmp_fn cmpElem) {
     int n = lista_get_quantidade(lista);
     for (int i = 0; i < n; i++)
         if (cmpElem(lista->arr[i], alvo) == 0)
@@ -94,21 +98,21 @@ int lista_encontra(Lista *lista, void *alvo,
     return -1;
 }
 
-void lista_ordena(Lista *lista, int (*cmpElem)(const void *, const void *)) {
+void lista_ordena(Lista *lista, cmp_fn cmpElem) {
     gcmpval = cmpElem;
     qsort(lista->arr, lista->qtd, __SIZEOF_POINTER__, (cmp_fn)&ptrvalcmp);
     gcmpval = NULL;
 }
 
-Lista *lista_copia(const Lista *lista, void *(*cpyelem)(const void *)) {
-    Lista *cpy = lista_init();
+Lista *lista_cpy(const Lista *lista) {
+    Lista *cpy = lista_init(lista->cpyelem, lista->liberaElem);
 
     int i;
     for (i = 0; i < lista->qtd; i++) {
-        void *cpye = cpyelem(lista->arr[i]);
+        void *cpye = lista->cpyelem(lista->arr[i]);
         if (cpye == NULL)
             exception_throw_OutOfMemory(
-                "Lista internal lista_copia cpyelem failed");
+                "Lista internal lista_cpy cpyelem failed");
 
         lista_push(cpy, cpye);
     }
