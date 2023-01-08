@@ -13,7 +13,7 @@ struct tHashTable {
     free_fn liberaValores;
 };
 
-HashTable *InicializaHashTable(cmp_fn comparadorChaves, free_fn liberaChaves,
+HashTable *ht_init(cmp_fn comparadorChaves, free_fn liberaChaves,
                                free_fn liberaValores) {
     HashTable *ht = malloc(sizeof *ht);
     if (ht == NULL)
@@ -27,13 +27,13 @@ HashTable *InicializaHashTable(cmp_fn comparadorChaves, free_fn liberaChaves,
     return ht;
 }
 
-void LiberaHashTable(HashTable *ht) {
+void ht_dispose(HashTable *ht) {
     lista_dispose(ht->pares, (free_fn)&kvp_dispose);
 
     free(ht);
 }
 
-void **GetValorHashTable(HashTable *ht, const void *chave, cpy_fn copiaChave) {
+void **ht_index(HashTable *ht, const void *chave, cpy_fn copiaChave) {
     int n = lista_get_quantidade(ht->pares);
 
     void **val = NULL; // Ponteiro para o ponteiro do valor
@@ -67,4 +67,4 @@ void **GetValorHashTable(HashTable *ht, const void *chave, cpy_fn copiaChave) {
     return val;
 }
 
-Lista *GetTodosParesHashTable(HashTable *ht) { return ht->pares; }
+Lista *ht_get_allkvps(HashTable *ht) { return ht->pares; }
