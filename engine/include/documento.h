@@ -6,7 +6,7 @@
 typedef struct tDocumento Documento;
 
 Documento *doc_init(int id, const char *arquivo, const char *classe,
-                    const Lista *refPalavras);
+                    const HashTable *htPalavras);
 
 void doc_dispose(Documento *doc);
 
@@ -16,6 +16,6 @@ char *doc_get_arquivo(Documento *doc);
 
 char *doc_get_classe(Documento *doc);
 
-Lista *doc_get_refPalavras(Documento *doc);
+HashTable *doc_get_htPalavras(Documento *doc);
 
 #endif

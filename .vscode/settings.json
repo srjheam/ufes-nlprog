@@ -1,7 +1,3 @@
 {
   "C_Cpp.clang_format_fallbackStyle": "{ BasedOnStyle: LLVM, IndentWidth: 4 }",
-  "files.associations": {
-    "lista.h": "c",
-    "indice.h": "c"
-  }
 }

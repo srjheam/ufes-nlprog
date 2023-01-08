@@ -68,3 +68,11 @@ void **ht_index(HashTable *ht, const void *chave, cpy_fn copiaChave) {
 }
 
 Lista *ht_get_allkvps(HashTable *ht) { return ht->pares; }
+
+HashTable *ht_cpy(const HashTable *ht) {
+    HashTable *cpy = ht_init(ht->comparadorChaves, ht->liberaChaves, ht->liberaValores);
+
+    cpy->pares = lista_cpy(ht->pares);
+
+    return cpy;
+}

@@ -27,7 +27,7 @@ void ht_dispose(HashTable *ht);
 
 /**
  * @brief Acessa o valor da @p ht pelo sua chave
- * 
+ *
  * @param ht Uma instancia de @ref HashTable
  * @param chave A chave nessa @p ht
  * @param copiaChave Uma função copiadora da chave da @p ht
@@ -37,10 +37,12 @@ void **ht_index(HashTable *ht, const void *chave, cpy_fn copiaChave);
 
 /**
  * @brief Adquire todos os pares chave valor dessa @p ht
- * 
+ *
  * @param ht Uma instancia de @ref HashTable
  * @return Lista* Uma @ref Lista* de @ref KeyValuePair*
  */
 Lista *ht_get_allkvps(HashTable *ht);
+
+HashTable *ht_cpy(const HashTable *ht);
 
 #endif
