@@ -5,11 +5,9 @@
 
 typedef struct tPalavra Palavra;
 
-Palavra *palavra_init(int id, const char *conteudo, const Lista *refDocumentos);
+Palavra *palavra_init(const char *conteudo, const Lista *refDocumentos);
 
 void palavra_dispose(Palavra *palavra);
-
-int palavra_get_id(Palavra *palavra);
 
 char *palavra_get_conteudo(Palavra *palavra);
 

@@ -6,16 +6,14 @@
 #include "palavra.h"
 
 struct tPalavra {
-    int id;
     char *conteudo;       // Palavra da palavra
     Lista *refDocumentos; // Lista<RefDocumento>
 };
 
-Palavra *palavra_init(int id, const char *conteudo,
+Palavra *palavra_init(const char *conteudo,
                       const Lista *refDocumentos) {
     Palavra *palavra = malloc(sizeof *palavra);
 
-    palavra->id = id;
     palavra->conteudo = strdup(conteudo);
     palavra->refDocumentos = lista_cpy(refDocumentos);
 
@@ -29,8 +27,6 @@ void palavra_dispose(Palavra *palavra) {
 
     free(palavra);
 }
-
-int palavra_get_id(Palavra *palavra) { return palavra->id; }
 
 char *palavra_get_conteudo(Palavra *palavra) { return palavra->conteudo; }
 
