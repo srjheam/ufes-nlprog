@@ -1,28 +1,35 @@
 #include <stdlib.h>
+#include <string.h>
 
 #include "ref_palavra.h"
 
 struct tRefPalavra {
-    int idPalavra;
+    char *palavra;
     int freqPalavra;
 };
 
-RefPalavra *refpalavra_init(int id, int freq) {
+RefPalavra *refpalavra_init(const char *palavra, int freq) {
     RefPalavra *refpalavra = malloc(sizeof *refpalavra);
 
-    refpalavra->idPalavra = id;
+    refpalavra->palavra = strdup(palavra);
     refpalavra->freqPalavra = freq;
 
     return refpalavra;
 }
 
-void refpalavra_dispose(RefPalavra *refpalavra) { free(refpalavra); }
+void refpalavra_dispose(RefPalavra *refpalavra) {
+    free(refpalavra->palavra);
 
-RefPalavra *refpalavra_cpy(RefPalavra *refpalavra) {
-    return refpalavra_init(refpalavra->idPalavra, refpalavra->freqPalavra);
+    free(refpalavra);
 }
 
-int refpalavra_get_id(RefPalavra *refpalavra) { return refpalavra->idPalavra; }
+RefPalavra *refpalavra_cpy(RefPalavra *refpalavra) {
+    return refpalavra_init(refpalavra->palavra, refpalavra->freqPalavra);
+}
+
+char *refpalavra_get_palavra(RefPalavra *refpalavra) {
+    return refpalavra->palavra;
+}
 
 int refpalavra_get_freq(RefPalavra *refpalavra) {
     return refpalavra->freqPalavra;
