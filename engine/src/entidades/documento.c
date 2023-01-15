@@ -12,11 +12,10 @@ struct tDocumento {
     HashTable *htPalavras; // HashTable<int, RefPalavra>
 };
 
-Documento *doc_init(int id, const char *arquivo, const char *classe,
+Documento *doc_init(const char *arquivo, const char *classe,
                     const HashTable *htPalavras) {
     Documento *doc = malloc(sizeof *doc);
 
-    doc->id = id;
     doc->arquivo = strdup(arquivo);
     doc->classe = strdup(classe);
     doc->htPalavras = ht_cpy(htPalavras);
@@ -32,8 +31,6 @@ void doc_dispose(Documento *doc) {
 
     free(doc);
 }
-
-int doc_get_id(Documento *doc) { return doc->id; }
 
 char *doc_get_arquivo(Documento *doc) { return doc->arquivo; }
 
