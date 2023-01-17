@@ -34,7 +34,7 @@ void kvp_dispose(KeyValuePair *par) {
 
 const void *kvp_get_key(const KeyValuePair *par) { return par->chave; }
 
-const void *kvp_get_value(const KeyValuePair *par) { return par->valor; }
+void *kvp_get_value(const KeyValuePair *par) { return par->valor; }
 
 void **kvp_ptr_value(KeyValuePair *pair) { return &(pair->valor); }
 

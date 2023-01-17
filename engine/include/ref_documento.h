@@ -6,7 +6,7 @@ typedef struct tRefDocumento RefDocumento;
 /**
  * @brief
  *
- * @param documento Nome do documento (34234324poc)
+ * @param documento Nome do documento
  * @param freq
  * @param tfIdf
  * @return RefDocumento*

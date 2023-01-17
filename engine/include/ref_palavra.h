@@ -13,4 +13,6 @@ char *refpalavra_get_palavra(RefPalavra *refpalavra);
 
 int refpalavra_get_freq(RefPalavra *refpalavra);
 
+void refpalavra_incrementaFreqPor(RefPalavra *refpalavra, int value);
+
 #endif

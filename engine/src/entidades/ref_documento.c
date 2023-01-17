@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 
 #include "ref_documento.h"
 
@@ -11,7 +12,7 @@ struct tRefDocumento {
 RefDocumento *refdoc_init(const char *documento, int freq, float tfIdf) {
     RefDocumento *refdoc = malloc(sizeof *refdoc);
 
-    refdoc->documento = documento;
+    refdoc->documento = strdup(documento);
     refdoc->freqPalavra = freq;
     refdoc->tfIdf = tfIdf;
 

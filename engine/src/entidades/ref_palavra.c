@@ -34,3 +34,7 @@ char *refpalavra_get_palavra(RefPalavra *refpalavra) {
 int refpalavra_get_freq(RefPalavra *refpalavra) {
     return refpalavra->freqPalavra;
 }
+
+void refpalavra_incrementaFreqPor(RefPalavra *refpalavra, int value) {
+    refpalavra->freqPalavra += value;
+}

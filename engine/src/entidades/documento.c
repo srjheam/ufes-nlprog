@@ -9,7 +9,7 @@ struct tDocumento {
     int id;
     char *arquivo;
     char *classe;
-    HashTable *htPalavras; // HashTable<int, RefPalavra>
+    HashTable *htPalavras; // HashTable<string, RefPalavra>
 };
 
 Documento *doc_init(const char *arquivo, const char *classe,
