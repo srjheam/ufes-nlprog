@@ -1,0 +1,97 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "NLIndexa",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/nlindexa",
+      "args": ["${input:nlindexa-file}", "${input:nlindexa-bin}"],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ],
+      "preLaunchTask": "build"
+    },
+    {
+      "name": "NLBusca",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/nlbusca",
+      "args": ["${input:nlindexa-bin}", "${input:nlbusca-k}"],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ],
+      "preLaunchTask": "build"
+    },
+    {
+      "name": "NLTesta",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/nltesta",
+      "args": [
+        "${input:nlindexa-bin}",
+        "${input:nlteste-file}",
+        "${input:nlbusca-k}",
+        "${input:nltesta-out}"
+      ],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ],
+      "preLaunchTask": "build"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "nlindexa-file",
+      "type": "promptString",
+      "description": "Informe o caminho do arquivo train.txt"
+    },
+    {
+      "id": "nlindexa-bin",
+      "type": "promptString",
+      "description": "Informe o arquivo binário de saída do NLIndexa"
+    },
+    {
+      "id": "nlbusca-k",
+      "type": "promptString",
+      "description": "Informe a quantidade KNN"
+    },
+    {
+      "id": "nlteste-file",
+      "type": "promptString",
+      "description": "Informe o caminho do arquivo teste.txt"
+    },
+    {
+      "id": "nltesta-out",
+      "type": "promptString",
+      "description": "Informe o arquivo de saída do NLTesta"
+    }
+  ]
+}

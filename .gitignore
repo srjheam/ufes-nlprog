@@ -1,0 +1,16 @@
+# Arquivos e diretórios da build
+nlbusca
+nlindexa
+nltesta
+**/build
+*.a
+
+# Diretório do data set
+data/
+
+# Arquivos gerados pelos programas
+*.bin
+*.txt
+
+# Saida do valgrind gerada por meio do Makefile
+valgrind-out.txt
