@@ -43,7 +43,7 @@ void repoidx_salvaIndiceDocumentos(HashTable *idxDocumentos, FILE *fbin) {
                 "engine/repositorios/repo_indices.repoidx_salvaIndiceDocumentos");
         }
 
-        HashTable *refPalavra = doc_get_htPalavras(doc);
+        HashTable *refPalavra = doc_get_refPalavras(doc);
 
         // Salva a quantidade de RefPalavra
         int refPalavraQty = ht_get_qty(refPalavra);
