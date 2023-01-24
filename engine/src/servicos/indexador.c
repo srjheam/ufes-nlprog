@@ -1,6 +1,6 @@
+#include <math.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
 
 #include "documento.h"
 #include "key_value_pair.h"
@@ -46,28 +46,33 @@ Documento *indexador_criaDocumento(char *train_instruc) {
 
 HashTable *indexador_criaIdxPalavras(HashTable *idxDocumentos) {
     // KeyValuePair<string, int*>
-    HashTable *idxFreq = ht_init((cpy_fn)strdup, (cmp_fn)strcmp,
-                                     (free_fn)free, (free_fn)free);
+    HashTable *idxFreq =
+        ht_init((cpy_fn)strdup, (cmp_fn)strcmp, (free_fn)free, (free_fn)free);
 
-    int *saveptr = NULL;
+    // KeyValuePair<string, Documento>
     KeyValuePair *curr = NULL;
+    int *saveptr = NULL;
     while ((curr = ht_iter(idxDocumentos, saveptr)) != NULL) {
-        // KeyValuePair<string, Documento>
         Documento *doc = kvp_get_value(curr);
-        
-        KeyValuePair *curr_palavra = NULL;
-        HashTable *palavras = doc_get_htPalavras(doc);
 
-        while ((curr_palavra = ht_iter(palavras, saveptr)) != NULL) {
-            RefPalavra *refpalavra = kvp_get_value(curr_palavra);
+        // HashTable<string, RefPalavra>
+        HashTable *palavras = doc_get_refPalavras(doc);
+
+        // KeyValuePair<string, RefPalavra>
+        KeyValuePair *curr_refpalavra = NULL;
+        int *saveptr = NULL;
+        while ((curr_refpalavra = ht_iter(palavras, saveptr)) != NULL) {
+            RefPalavra *refpalavra = kvp_get_value(curr_refpalavra);
             char *palavra = refpalavra_get_palavra(refpalavra);
 
-            if(ht_get(idxFreq, palavra) == NULL){
-                ht_add(idxFreq, palavra, 1);
-            }
-            //nao achei comando de modificar o valor, perguntar ao criador da biblioteca se assim funciona
-            else{
-                ht_add(idxFreq, palavra, ht_get(idxFreq, palavra) + 1);
+            int *freq = ht_get(idxFreq, palavra);
+            if (freq == NULL) {
+                int *v = malloc(sizeof *v);
+                *v = 1;
+
+                ht_add(idxFreq, palavra, v);
+            } else {
+                *freq++;
             }
         }
     }
@@ -81,38 +86,37 @@ HashTable *indexador_criaIdxPalavras(HashTable *idxDocumentos) {
     while ((curr = ht_iter(idxDocumentos, saveptr)) != NULL) {
         // KeyValuePair<string, Documento>
         Documento *doc = kvp_get_value(curr);
-        
-        KeyValuePair *curr_palavra = NULL;
-        HashTable *palavras = doc_get_htPalavras(doc);
 
-        while ((curr_palavra = ht_iter(palavras, saveptr)) != NULL) {
-            RefPalavra *refpalavra = kvp_get_value(curr_palavra);
+        KeyValuePair *curr_refpalavra = NULL;
+        HashTable *palavras = doc_get_refPalavras(doc);
+
+        while ((curr_refpalavra = ht_iter(palavras, saveptr)) != NULL) {
+            RefPalavra *refpalavra = kvp_get_value(curr_refpalavra);
             char *palavra = refpalavra_get_palavra(refpalavra);
             int frequencia = refpalavra_get_freq(refpalavra);
 
-            //calcula o tf-idf
+            // calcula o tf-idf
             int n = ht_get_qty(curr);
             int df = ht_get(idxFreq, palavra);
 
             float idf_dividendo = 1 + n;
             float idf_divisor = 1 + df;
 
-            float idf = log((idf_dividendo/idf_divisor)+1);
+            float idf = log((idf_dividendo / idf_divisor) + 1);
 
-            float tfIdf = frequencia*idf;
+            float tfIdf = frequencia * idf;
 
             RefDocumento *refdocumento = refdoc_init(curr, frequencia, tfIdf);
 
             Palavra *pal = ht_get(idxPalavras, palavra);
-            if (pal == NULL){
+            if (pal == NULL) {
                 Palavra *nova_palavra = palavra_init(palavra, refdocumento);
                 ht_add(idxPalavras, nova_palavra, refdocumento);
             }
-                     
+
             /* else
                 atualizar o refdocumento da palavra ja existente na hashtable */
         }
-
     }
 
     return idxPalavras;
