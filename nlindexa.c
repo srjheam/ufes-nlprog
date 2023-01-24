@@ -13,11 +13,7 @@ int main(int argc, char const *argv[]) {
                         "file or index bin file",
                         EXIT_FAILURE);
 
-    FILE *train = fopen(argv[1], "r");
-
-    Indice *idx = indexador_criaIndice(train);
-
-    fclose(train);
+    Indice *idx = indexador_criaIndice(argv[1]);
 
     printf("Documentos indexados: %d\n", ht_get_qty(indice_get_documentos(idx)));
     printf("Palavras indexadas: %d\n", ht_get_qty(indice_get_palavras(idx)));

@@ -16,7 +16,7 @@ OBJS = $(patsubst %.c, $(BUILDIR)/%.o, $(notdir $(SRCS)))
 # CCompiler - é o compilador usado
 # CFLAGS - são as flags dadas ao compilador durante a compilação
 CC = gcc
-override CFLAGS += -lm -Wall -Wall -Wextra -Werror -pedantic -ggdb3 -I $(INCLUDE)
+override CFLAGS += -Wall -Wall -Wextra -Werror -pedantic -ggdb3 -I $(INCLUDE) -lm
 
 # ARchive - é o comando arquivador da biblioteca
 # ARFLAGS - são as flags dadas ao arquivador
@@ -32,7 +32,7 @@ all : pre-build build
 
 # Compila todos os .o
 $(BUILDIR)/%.o : %.c
-	$(CC) $(CFLAGS) -o $@ -c $<
+	$(CC) -o $@ -c $< $(CFLAGS)
 
 # Preparativos para o build; Garante que o diretório build/ existe
 pre-build:

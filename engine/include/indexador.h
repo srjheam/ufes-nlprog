@@ -14,6 +14,6 @@
 
 #include "indice.h"
 
-Indice *indexador_criaIndice(FILE *train);
+Indice *indexador_criaIndice(char *train);
 
 #endif // _INDEXADOR_

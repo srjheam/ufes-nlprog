@@ -7,6 +7,7 @@
 #include "palavra.h"
 #include "ref_palavra.h"
 #include "repo_noticias.h"
+#include "exception.h"
 
 #include "indexador.h"
 
@@ -25,6 +26,8 @@ Documento *indexador_criaDocumento(char *train_instruc) {
             if ((nome = strdup(token)) == NULL)
                 break;
         } else if (i == 2) {
+            token[strlen(token) - 1] = '\0';
+
             if ((classe = strdup(token)) == NULL)
                 break;
         } else
@@ -36,6 +39,8 @@ Documento *indexador_criaDocumento(char *train_instruc) {
     }
 
     FILE *fdoc = fopen(nome, "r");
+    if (fdoc == NULL)
+        exception_throw_failure("Nao pode abrir noticia em indexador.indexador_criaDocumento");
 
     Documento *doc = reponoticias_carregaDocumento(fdoc, nome, classe);
 
@@ -133,18 +138,22 @@ HashTable *indexador_criaIdxPalavras(HashTable *idxDocumentos) {
     return idxPalavras;
 }
 
-Indice *indexador_criaIndice(FILE *train) {
+Indice *indexador_criaIndice(char *trainPath) {
     // HashTable<string, Documento>
     HashTable *documentos = ht_init((cpy_fn)strdup, (cmp_fn)strcmp,
                                     (free_fn)free, (free_fn)doc_dispose);
 
+    FILE *train = fopen(trainPath, "r");
+
     char *buffer = NULL;
     size_t len = 0;
-    while (getline(&buffer, &len, train) > 1) {
+    while (getline(&buffer, &len, train) > 1) {indexador_criaDocumento
         Documento *doc = indexador_criaDocumento(buffer);
         ht_add(documentos, doc_get_arquivo(doc), doc);
     }
     free(buffer);
+
+    fclose(train);
 
     // HashTable<string, Palavra>
     HashTable *palavras = indexador_criaIdxPalavras(documentos);
