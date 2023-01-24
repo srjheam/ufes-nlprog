@@ -5,12 +5,12 @@
 
 typedef struct tPalavra Palavra;
 
-Palavra *palavra_init(const char *conteudo, const Lista *refDocumentos);
+Palavra *palavra_init(const char *conteudo, const HashTable *refDocumentos);
 
 void palavra_dispose(Palavra *palavra);
 
 char *palavra_get_conteudo(Palavra *palavra);
 
-Lista *palavra_get_refDocumentos(Palavra *palavra);
+HashTable *palavra_get_refDocumentos(Palavra *palavra);
 
 #endif
