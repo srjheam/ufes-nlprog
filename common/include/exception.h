@@ -7,4 +7,6 @@ void exception_throw(char *name, char *msg, int code);
 
 void exception_throw_OutOfMemory(char *msg);
 
+void exception_throw_failure(char *msg);
+
 #endif
