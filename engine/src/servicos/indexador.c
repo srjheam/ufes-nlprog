@@ -72,50 +72,61 @@ HashTable *indexador_criaIdxPalavras(HashTable *idxDocumentos) {
 
                 ht_add(idxFreq, palavra, v);
             } else {
-                *freq++;
+                *freq += 1;
             }
         }
     }
 
-    // KeyValuePair<string, Palavra>
+    // HashTable<string, Palavra>
     HashTable *idxPalavras = ht_init((cpy_fn)strdup, (cmp_fn)strcmp,
                                      (free_fn)free, (free_fn)palavra_dispose);
 
     saveptr = NULL;
     curr = NULL;
     while ((curr = ht_iter(idxDocumentos, saveptr)) != NULL) {
-        // KeyValuePair<string, Documento>
         Documento *doc = kvp_get_value(curr);
 
-        KeyValuePair *curr_refpalavra = NULL;
         HashTable *palavras = doc_get_refPalavras(doc);
 
+        // KeyValuePair<string, RefPalavra>
+        KeyValuePair *curr_refpalavra = NULL;
+        int *saveptr = NULL;
         while ((curr_refpalavra = ht_iter(palavras, saveptr)) != NULL) {
             RefPalavra *refpalavra = kvp_get_value(curr_refpalavra);
             char *palavra = refpalavra_get_palavra(refpalavra);
             int frequencia = refpalavra_get_freq(refpalavra);
 
             // calcula o tf-idf
-            int n = ht_get_qty(curr);
-            int df = ht_get(idxFreq, palavra);
+            int n = ht_get_qty(idxDocumentos);
+            int *df = ht_get(idxFreq, palavra);
 
             float idf_dividendo = 1 + n;
-            float idf_divisor = 1 + df;
+            float idf_divisor = 1 + *df;
 
-            float idf = log((idf_dividendo / idf_divisor) + 1);
+            float idf = log((idf_dividendo / idf_divisor)) + 1;
 
             float tfIdf = frequencia * idf;
 
-            RefDocumento *refdocumento = refdoc_init(curr, frequencia, tfIdf);
+            char *documento = doc_get_arquivo(doc);
+            RefDocumento *refdocumento = refdoc_init(documento, frequencia, tfIdf);
 
             Palavra *pal = ht_get(idxPalavras, palavra);
             if (pal == NULL) {
-                Palavra *nova_palavra = palavra_init(palavra, refdocumento);
-                ht_add(idxPalavras, nova_palavra, refdocumento);
-            }
+                // HashTable<string, RefDocumento>
+                HashTable *refdocumentos = ht_init((cpy_fn)strdup, (cmp_fn)strcmp,
+                                                   (free_fn)free, (free_fn)refdoc_dispose);
 
-            /* else
-                atualizar o refdocumento da palavra ja existente na hashtable */
+                ht_add(refdocumentos, documento, refdocumento);
+
+                Palavra *nova_palavra = palavra_init(palavra, refdocumentos);
+                ht_add(idxPalavras, palavra, nova_palavra);
+            }
+            else {
+                // HashTable<string, RefDocumento>
+                HashTable *refdocumentos = palavra_get_refDocumentos(pal);
+
+                ht_add(refdocumentos, documento, refdocumento);
+            }
         }
     }
 
