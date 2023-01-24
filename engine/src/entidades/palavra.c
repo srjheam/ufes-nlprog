@@ -15,7 +15,7 @@ Palavra *palavra_init(const char *conteudo,
     Palavra *palavra = malloc(sizeof *palavra);
 
     palavra->conteudo = strdup(conteudo);
-    palavra->refDocumentos = lista_cpy(refDocumentos);
+    palavra->refDocumentos = ht_cpy(refDocumentos);
 
     return palavra;
 }
@@ -23,7 +23,7 @@ Palavra *palavra_init(const char *conteudo,
 void palavra_dispose(Palavra *palavra) {
     free(palavra->conteudo);
 
-    lista_dispose(palavra->refDocumentos);
+    ht_dispose(palavra->refDocumentos);
 
     free(palavra);
 }
