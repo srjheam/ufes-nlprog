@@ -31,4 +31,4 @@ void indice_dispose(Indice *idx) {
 
 HashTable *indice_get_palavras(Indice *idx) { return idx->idxPalavras; }
 
-HashTable *indice_get_documentos(Indice *idx) { return idx->idxPalavras; }
+HashTable *indice_get_documentos(Indice *idx) { return idx->idxDocumentos; }

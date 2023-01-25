@@ -1,9 +1,9 @@
 #ifndef _HT_
 #define _HT_
 
+#include "key_value_pair.h"
 #include "lista.h"
 #include "types.h"
-#include "key_value_pair.h"
 
 typedef struct tHashTable HashTable;
 
@@ -11,13 +11,15 @@ typedef struct tHashTable HashTable;
  * @brief Inicializa dinamicamente uma @ref HashTable
  *
  * @param copiaChave Uma função copiadora da chave da @p ht
+ * @param copiaValor Uma função copiadora do valor da @p ht
  * @param comparadorChaves Uma função comparadora das chaves da @ref HashTable
  * @param liberaChaves Uma função destrutora das chaves da @ref HashTable
  * @param liberaValores Uma função destrutora dos valores da @ref HashTable
  * @return HashTable* Uma nova instancia de @ref HashTable
  */
-HashTable *ht_init(cpy_fn copiaChave, cmp_fn comparadorChaves,
-                   free_fn liberaChaves, free_fn liberaValores);
+HashTable *ht_init(cpy_fn copiaChave, cpy_fn copiaValor,
+                   cmp_fn comparadorChaves, free_fn liberaChaves,
+                   free_fn liberaValores);
 
 /**
  * @brief Libera o @p ht e todos os seus elementos da memória em que foram
@@ -51,5 +53,7 @@ Lista *ht_get_allkvps(HashTable *ht);
 KeyValuePair *ht_iter(HashTable *ht, int *saveptr);
 
 HashTable *ht_cpy(const HashTable *ht);
+
+int *lib_intdup(const int *n);
 
 #endif

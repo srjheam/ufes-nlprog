@@ -10,7 +10,7 @@
 
 #include "repo_indices.h"
 
-void repoidx_salvaIndiceDocumentos(HashTable *idxDocumentos, FILE *fbin) {
+static void repoidx_salvaIndiceDocumentos(HashTable *idxDocumentos, FILE *fbin) {
     // Salva a quantidade de documentos
     int idxDocumentosQty = ht_get_qty(idxDocumentos);
     if (fwrite(&idxDocumentosQty, sizeof idxDocumentosQty, 1, fbin) != 1) {
@@ -21,7 +21,7 @@ void repoidx_salvaIndiceDocumentos(HashTable *idxDocumentos, FILE *fbin) {
 
     // KVP<string, Documento>
     KeyValuePair *curr = NULL;
-    int *saveptr = NULL;
+    int *saveptr = calloc(1, sizeof *saveptr);
     while ((curr = ht_iter(idxDocumentos, saveptr)) != NULL) {
         Documento *doc = kvp_get_value(curr);
 
@@ -31,7 +31,8 @@ void repoidx_salvaIndiceDocumentos(HashTable *idxDocumentos, FILE *fbin) {
         if (fwrite(nome, nlen, 1, fbin) != 1) {
             exception_throw_failure(
                 "Erro ao salvar nome do indice no bin - em "
-                "engine/repositorios/repo_indices.repoidx_salvaIndiceDocumentos");
+                "engine/repositorios/"
+                "repo_indices.repoidx_salvaIndiceDocumentos");
         }
 
         // Salva classe de um documento com final '\0'
@@ -40,7 +41,8 @@ void repoidx_salvaIndiceDocumentos(HashTable *idxDocumentos, FILE *fbin) {
         if (fwrite(classe, nlen, 1, fbin) != 1) {
             exception_throw_failure(
                 "Erro ao salvar classe do indice no bin - em "
-                "engine/repositorios/repo_indices.repoidx_salvaIndiceDocumentos");
+                "engine/repositorios/"
+                "repo_indices.repoidx_salvaIndiceDocumentos");
         }
 
         HashTable *refPalavra = doc_get_refPalavras(doc);
@@ -50,12 +52,13 @@ void repoidx_salvaIndiceDocumentos(HashTable *idxDocumentos, FILE *fbin) {
         if (fwrite(&refPalavraQty, sizeof refPalavraQty, 1, fbin) != 1) {
             exception_throw_failure(
                 "Erro ao salvar refPalavraQty do indice no bin - em "
-                "engine/repositorios/repo_indices.repoidx_salvaIndiceDocumentos");
+                "engine/repositorios/"
+                "repo_indices.repoidx_salvaIndiceDocumentos");
         }
 
         // KVP<string, RefPalavra>
         KeyValuePair *curr = NULL;
-        int *saveptr = NULL;
+        int *saveptr = calloc(1, sizeof *saveptr);
         while ((curr = ht_iter(refPalavra, saveptr)) != NULL) {
             RefPalavra *ref = kvp_get_value(curr);
 
@@ -65,7 +68,8 @@ void repoidx_salvaIndiceDocumentos(HashTable *idxDocumentos, FILE *fbin) {
             if (fwrite(palavra, nlen, 1, fbin) != 1) {
                 exception_throw_failure(
                     "Erro ao salvar palavra do indice no bin - em "
-                    "engine/repositorios/repo_indices.repoidx_salvaIndiceDocumentos");
+                    "engine/repositorios/"
+                    "repo_indices.repoidx_salvaIndiceDocumentos");
             }
 
             // Salva frequencia de um refpalavra
@@ -73,13 +77,16 @@ void repoidx_salvaIndiceDocumentos(HashTable *idxDocumentos, FILE *fbin) {
             if (fwrite(&freq, sizeof freq, 1, fbin) != 1) {
                 exception_throw_failure(
                     "Erro ao salvar frequencia do indice no bin - em "
-                    "engine/repositorios/repo_indices.repoidx_salvaIndiceDocumentos");
+                    "engine/repositorios/"
+                    "repo_indices.repoidx_salvaIndiceDocumentos");
             }
         }
+        free(saveptr);
     }
+    free(saveptr);
 }
 
-void repoidx_salvaIndicePalavras(HashTable *idxPalavras, FILE *fbin) {
+static void repoidx_salvaIndicePalavras(HashTable *idxPalavras, FILE *fbin) {
     // Salva a quantidade de palavras
     int idxPalavrasQty = ht_get_qty(idxPalavras);
     if (fwrite(&idxPalavrasQty, sizeof idxPalavrasQty, 1, fbin) != 1) {
@@ -90,7 +97,7 @@ void repoidx_salvaIndicePalavras(HashTable *idxPalavras, FILE *fbin) {
 
     // KVP<string, Palavra>
     KeyValuePair *curr = NULL;
-    int *saveptr = NULL;
+    int *saveptr = calloc(1, sizeof *saveptr);
     while ((curr = ht_iter(idxPalavras, saveptr)) != NULL) {
         Palavra *pal = kvp_get_value(curr);
 
@@ -115,7 +122,7 @@ void repoidx_salvaIndicePalavras(HashTable *idxPalavras, FILE *fbin) {
 
         // KVP<string, RefPalavra>
         KeyValuePair *curr = NULL;
-        int *saveptr = NULL;
+        int *saveptr = calloc(1, sizeof *saveptr);
         while ((curr = ht_iter(refDocumento, saveptr)) != NULL) {
             RefDocumento *ref = kvp_get_value(curr);
 
@@ -125,7 +132,8 @@ void repoidx_salvaIndicePalavras(HashTable *idxPalavras, FILE *fbin) {
             if (fwrite(doc, nlen, 1, fbin) != 1) {
                 exception_throw_failure(
                     "Erro ao salvar palavra do indice no bin - em "
-                    "engine/repositorios/repo_indices.repoidx_salvaIndicePalavras");
+                    "engine/repositorios/"
+                    "repo_indices.repoidx_salvaIndicePalavras");
             }
 
             // Salva frequencia de um refdocumento
@@ -133,17 +141,29 @@ void repoidx_salvaIndicePalavras(HashTable *idxPalavras, FILE *fbin) {
             if (fwrite(&freq, sizeof freq, 1, fbin) != 1) {
                 exception_throw_failure(
                     "Erro ao salvar frequencia do indice no bin - em "
-                    "engine/repositorios/repo_indices.repoidx_salvaIndicePalavras");
+                    "engine/repositorios/"
+                    "repo_indices.repoidx_salvaIndicePalavras");
             }
 
             float tfIdf = refdoc_get_tdIdf(ref);
             if (fwrite(&tfIdf, sizeof tfIdf, 1, fbin) != 1) {
                 exception_throw_failure(
                     "Erro ao salvar tfIdf do indice no bin - em "
-                    "engine/repositorios/repo_indices.repoidx_salvaIndicePalavras");
+                    "engine/repositorios/"
+                    "repo_indices.repoidx_salvaIndicePalavras");
             }
         }
+        free(saveptr);
     }
+    free(saveptr);
+}
+
+static HashTable *repoidx_carregaIndicePalavras(FILE *fbin) {
+
+}
+
+static HashTable *repoidx_carregaIndicePalavras(FILE *fbin) {
+
 }
 
 void repoidx_salvaIndice(Indice *idx, const char *arquivo) {
@@ -155,9 +175,28 @@ void repoidx_salvaIndice(Indice *idx, const char *arquivo) {
     repoidx_salvaIndiceDocumentos(idxDocumentos, fbin);
 
     // HashTable<string, Palavra>
-    HashTable *idxPalavras = indice_get_documentos(idx);
+    HashTable *idxPalavras = indice_get_palavras(idx);
 
     repoidx_salvaIndicePalavras(idxPalavras, fbin);
 
     fclose(fbin);
+}
+
+Indice *repoidx_carregaIndice(const char *arquivo) {
+    FILE *fbin = fopen(arquivo, "wb");
+
+    // HashTable<string, Documento>
+    HashTable *idxDocumentos = repoidx_carregaIndiceDocumentos(fbin);    
+
+    // HashTable<string, Palavra>
+    HashTable *idxPalavras = repoidx_carregaIndicePalavras(fbin);
+
+    fclose(fbin);
+
+    Indice *idx = indice_init(idxDocumentos, idxPalavras);
+
+    ht_dispose(idxDocumentos);
+    ht_dispose(idxPalavras);
+
+    return idx;
 }

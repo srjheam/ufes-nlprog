@@ -5,4 +5,6 @@
 
 void repoidx_salvaIndice(Indice *idx, const char *arquivo);
 
+Indice *repoidx_carregaIndice(const char *arquivo);
+
 #endif // _REPO_INDICES_

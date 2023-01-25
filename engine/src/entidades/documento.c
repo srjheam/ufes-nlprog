@@ -6,7 +6,6 @@
 #include "documento.h"
 
 struct tDocumento {
-    int id;
     char *arquivo;
     char *classe;
     HashTable *refPalavras; // HashTable<string, RefPalavra>
@@ -37,3 +36,7 @@ char *doc_get_arquivo(Documento *doc) { return doc->arquivo; }
 char *doc_get_classe(Documento *doc) { return doc->classe; }
 
 HashTable *doc_get_refPalavras(Documento *doc) { return doc->refPalavras; }
+
+Documento *doc_cpy(const Documento *doc) {
+    return doc_init(doc->arquivo, doc->classe, doc->refPalavras);
+}

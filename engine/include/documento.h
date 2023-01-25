@@ -17,4 +17,6 @@ char *doc_get_classe(Documento *doc);
 
 HashTable *doc_get_refPalavras(Documento *doc);
 
+Documento *doc_cpy(const Documento *doc);
+
 #endif

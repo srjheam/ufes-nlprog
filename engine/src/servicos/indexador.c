@@ -1,13 +1,14 @@
+#include <libgen.h>
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "documento.h"
+#include "exception.h"
 #include "key_value_pair.h"
 #include "palavra.h"
 #include "ref_palavra.h"
 #include "repo_noticias.h"
-#include "exception.h"
 
 #include "indexador.h"
 
@@ -26,8 +27,6 @@ Documento *indexador_criaDocumento(char *train_instruc) {
             if ((nome = strdup(token)) == NULL)
                 break;
         } else if (i == 2) {
-            token[strlen(token) - 1] = '\0';
-
             if ((classe = strdup(token)) == NULL)
                 break;
         } else
@@ -40,7 +39,8 @@ Documento *indexador_criaDocumento(char *train_instruc) {
 
     FILE *fdoc = fopen(nome, "r");
     if (fdoc == NULL)
-        exception_throw_failure("Nao pode abrir noticia em indexador.indexador_criaDocumento");
+        exception_throw_failure(
+            "Nao pode abrir noticia em indexador.indexador_criaDocumento");
 
     Documento *doc = reponoticias_carregaDocumento(fdoc, nome, classe);
 
@@ -51,12 +51,12 @@ Documento *indexador_criaDocumento(char *train_instruc) {
 
 HashTable *indexador_criaIdxPalavras(HashTable *idxDocumentos) {
     // KeyValuePair<string, int*>
-    HashTable *idxFreq =
-        ht_init((cpy_fn)strdup, (cmp_fn)strcmp, (free_fn)free, (free_fn)free);
+    HashTable *idxFreq = ht_init((cpy_fn)strdup, (cpy_fn)lib_intdup,
+                                 (cmp_fn)strcmp, (free_fn)free, (free_fn)free);
 
     // KeyValuePair<string, Documento>
     KeyValuePair *curr = NULL;
-    int *saveptr = NULL;
+    int *saveptr = calloc(1, sizeof *saveptr);
     while ((curr = ht_iter(idxDocumentos, saveptr)) != NULL) {
         Documento *doc = kvp_get_value(curr);
 
@@ -65,7 +65,7 @@ HashTable *indexador_criaIdxPalavras(HashTable *idxDocumentos) {
 
         // KeyValuePair<string, RefPalavra>
         KeyValuePair *curr_refpalavra = NULL;
-        int *saveptr = NULL;
+        int *saveptr = calloc(1, sizeof *saveptr);
         while ((curr_refpalavra = ht_iter(palavras, saveptr)) != NULL) {
             RefPalavra *refpalavra = kvp_get_value(curr_refpalavra);
             char *palavra = refpalavra_get_palavra(refpalavra);
@@ -80,13 +80,16 @@ HashTable *indexador_criaIdxPalavras(HashTable *idxDocumentos) {
                 *freq += 1;
             }
         }
+        free(saveptr);
     }
+    free(saveptr);
 
     // HashTable<string, Palavra>
-    HashTable *idxPalavras = ht_init((cpy_fn)strdup, (cmp_fn)strcmp,
-                                     (free_fn)free, (free_fn)palavra_dispose);
+    HashTable *idxPalavras =
+        ht_init((cpy_fn)strdup, (cpy_fn)palavra_cpy, (cmp_fn)strcmp,
+                (free_fn)free, (free_fn)palavra_dispose);
 
-    saveptr = NULL;
+    saveptr = calloc(1, sizeof *saveptr);
     curr = NULL;
     while ((curr = ht_iter(idxDocumentos, saveptr)) != NULL) {
         Documento *doc = kvp_get_value(curr);
@@ -95,7 +98,7 @@ HashTable *indexador_criaIdxPalavras(HashTable *idxDocumentos) {
 
         // KeyValuePair<string, RefPalavra>
         KeyValuePair *curr_refpalavra = NULL;
-        int *saveptr = NULL;
+        int *saveptr = calloc(1, sizeof *saveptr);
         while ((curr_refpalavra = ht_iter(palavras, saveptr)) != NULL) {
             RefPalavra *refpalavra = kvp_get_value(curr_refpalavra);
             char *palavra = refpalavra_get_palavra(refpalavra);
@@ -113,45 +116,62 @@ HashTable *indexador_criaIdxPalavras(HashTable *idxDocumentos) {
             float tfIdf = frequencia * idf;
 
             char *documento = doc_get_arquivo(doc);
-            RefDocumento *refdocumento = refdoc_init(documento, frequencia, tfIdf);
+            RefDocumento *refdocumento =
+                refdoc_init(documento, frequencia, tfIdf);
 
             Palavra *pal = ht_get(idxPalavras, palavra);
             if (pal == NULL) {
                 // HashTable<string, RefDocumento>
-                HashTable *refdocumentos = ht_init((cpy_fn)strdup, (cmp_fn)strcmp,
-                                                   (free_fn)free, (free_fn)refdoc_dispose);
+                HashTable *refdocumentos =
+                    ht_init((cpy_fn)strdup, (cpy_fn)refdoc_cpy, (cmp_fn)strcmp,
+                            (free_fn)free, (free_fn)refdoc_dispose);
 
                 ht_add(refdocumentos, documento, refdocumento);
 
                 Palavra *nova_palavra = palavra_init(palavra, refdocumentos);
                 ht_add(idxPalavras, palavra, nova_palavra);
-            }
-            else {
+            } else {
                 // HashTable<string, RefDocumento>
                 HashTable *refdocumentos = palavra_get_refDocumentos(pal);
 
                 ht_add(refdocumentos, documento, refdocumento);
             }
         }
+        free(saveptr);
     }
+    free(saveptr);
 
     return idxPalavras;
 }
 
-Indice *indexador_criaIndice(char *trainPath) {
+Indice *indexador_criaIndice(const char *trainPath) {
     // HashTable<string, Documento>
-    HashTable *documentos = ht_init((cpy_fn)strdup, (cmp_fn)strcmp,
-                                    (free_fn)free, (free_fn)doc_dispose);
+    HashTable *documentos =
+        ht_init((cpy_fn)strdup, (cpy_fn)doc_cpy, (cmp_fn)strcmp, (free_fn)free,
+                (free_fn)doc_dispose);
 
     FILE *train = fopen(trainPath, "r");
 
+    char *traincpy = strdup(trainPath);
+    char *basePath = dirname(traincpy);
+
     char *buffer = NULL;
     size_t len = 0;
-    while (getline(&buffer, &len, train) > 1) {indexador_criaDocumento
-        Documento *doc = indexador_criaDocumento(buffer);
+    while (getline(&buffer, &len, train) > 1) {
+        int pathSize = strlen(basePath) + strlen(buffer) + 1;
+
+        // path + classe
+        char *train_instruct = malloc(pathSize);
+        snprintf(train_instruct, pathSize, "%s/%s", basePath, buffer);
+
+        Documento *doc = indexador_criaDocumento(train_instruct);
+
+        free(train_instruct);
+
         ht_add(documentos, doc_get_arquivo(doc), doc);
     }
     free(buffer);
+    free(traincpy);
 
     fclose(train);
 

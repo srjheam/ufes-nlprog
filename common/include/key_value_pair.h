@@ -10,11 +10,14 @@ typedef struct tKeyValuePair KeyValuePair;
  * 
  * @param chave A chave
  * @param valor O valor
+ * @param copiaChave Uma função copiadora da chave do @ref KeyValuePair
+ * @param copiaValor Uma função copiadora do valor do @ref KeyValuePair
  * @param liberaChave Uma função destrutora da chave do @ref KeyValuePair
  * @param liberaValor Uma função destrutora do valor do @ref KeyValuePair
  * @return KeyValuePair* Uma nova instancia de @ref KeyValuePair
  */
-KeyValuePair *kvp_init(void *chave, void *valor, free_fn liberaChave,
+KeyValuePair *kvp_init(const void *chave, const void *valor, cpy_fn copiaChave,
+                       cpy_fn copiaValor, free_fn liberaChave,
                        free_fn liberaValor);
 
 /**

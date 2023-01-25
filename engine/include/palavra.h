@@ -13,4 +13,6 @@ char *palavra_get_conteudo(Palavra *palavra);
 
 HashTable *palavra_get_refDocumentos(Palavra *palavra);
 
+Palavra *palavra_cpy(const Palavra *palavra);
+
 #endif

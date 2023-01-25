@@ -33,3 +33,7 @@ char *palavra_get_conteudo(Palavra *palavra) { return palavra->conteudo; }
 HashTable *palavra_get_refDocumentos(Palavra *palavra) {
     return palavra->refDocumentos;
 }
+
+Palavra *palavra_cpy(const Palavra *palavra) {
+    return palavra_init(palavra->conteudo, palavra->refDocumentos);
+}

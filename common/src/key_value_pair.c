@@ -7,18 +7,23 @@
 struct tKeyValuePair {
     void *chave;
     void *valor;
+    cpy_fn copiaChave;
+    cpy_fn copiaValor;
     free_fn liberaChave;
     free_fn liberaValor;
 };
 
-KeyValuePair *kvp_init(void *chave, void *valor, free_fn liberaChave,
+KeyValuePair *kvp_init(const void *chave, const void *valor, cpy_fn copiaChave,
+                       cpy_fn copiaValor, free_fn liberaChave,
                        free_fn liberaValor) {
     KeyValuePair *par = malloc(sizeof *par);
     if (par == NULL)
         exception_throw_OutOfMemory("KeyValuePair malloc failed");
 
-    par->chave = chave;
-    par->valor = valor;
+    par->chave = copiaChave(chave);
+    par->valor = copiaValor(valor);
+    par->copiaChave = copiaChave;
+    par->copiaValor = copiaValor;
     par->liberaChave = liberaChave;
     par->liberaValor = liberaValor;
 
@@ -40,7 +45,8 @@ void **kvp_ptr_value(KeyValuePair *pair) { return &(pair->valor); }
 
 KeyValuePair *kvp_cpy(KeyValuePair *kvp) {
     KeyValuePair *cpy =
-        kvp_init(kvp->chave, kvp->valor, kvp->liberaChave, kvp->liberaValor);
+        kvp_init(kvp->chave, kvp->valor, kvp->copiaChave, kvp->copiaValor,
+                 kvp->liberaChave, kvp->liberaValor);
 
     return cpy;
 }
