@@ -37,7 +37,7 @@ void ht_dispose(HashTable *ht) {
     free(ht);
 }
 
-void ht_add(HashTable *ht, const void *chave, void *value) {
+void ht_add(HashTable *ht, const void *chave, const void *value) {
     int n = lista_get_quantidade(ht->pares);
 
     int i;
@@ -46,8 +46,7 @@ void ht_add(HashTable *ht, const void *chave, void *value) {
             lista_get_elemento(ht->pares, i); // KeyValuePair<void*, void*>
         const void *currChave = kvp_get_key(curr);
         if (ht->comparadorChaves(currChave, chave) == 0) {
-            void **val = kvp_ptr_value(curr);
-            *val = value;
+            kvp_set_value(curr, value);
             return;
         }
     }
@@ -82,6 +81,8 @@ HashTable *ht_cpy(const HashTable *ht) {
     HashTable *cpy =
         ht_init(ht->copiaChave, ht->copiaValor, ht->comparadorChaves,
                 ht->liberaChaves, ht->liberaValores);
+
+    lista_dispose(cpy->pares);
 
     cpy->pares = lista_cpy(ht->pares);
 
