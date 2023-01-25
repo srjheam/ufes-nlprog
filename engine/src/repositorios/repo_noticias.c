@@ -27,8 +27,11 @@ Documento *reponoticias_carregaDocumento(FILE *noticia, char *nome,
             break;
 
         RefPalavra *ref = ht_get(refPalavras, token);
-        if (ref == NULL)
-            ht_add(refPalavras, token, refpalavra_init(token, 1));
+        if (ref == NULL) {
+            RefPalavra *ref = refpalavra_init(token, 1);
+            ht_add(refPalavras, token, ref);
+            refpalavra_dispose(ref);
+        }
         else
             refpalavra_incrementaFreqPor(ref, 1);
     }

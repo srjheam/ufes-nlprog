@@ -76,6 +76,7 @@ HashTable *indexador_criaIdxPalavras(HashTable *idxDocumentos) {
                 *v = 1;
 
                 ht_add(idxFreq, palavra, v);
+                free(v);
             } else {
                 *freq += 1;
             }
@@ -128,13 +129,19 @@ HashTable *indexador_criaIdxPalavras(HashTable *idxDocumentos) {
 
                 ht_add(refdocumentos, documento, refdocumento);
 
+                refdoc_dispose(refdocumento);
+
                 Palavra *nova_palavra = palavra_init(palavra, refdocumentos);
                 ht_add(idxPalavras, palavra, nova_palavra);
+
+                palavra_dispose(nova_palavra);
             } else {
                 // HashTable<string, RefDocumento>
                 HashTable *refdocumentos = palavra_get_refDocumentos(pal);
 
                 ht_add(refdocumentos, documento, refdocumento);
+
+                refdoc_dispose(refdocumento);
             }
         }
         free(saveptr);
@@ -169,6 +176,8 @@ Indice *indexador_criaIndice(const char *trainPath) {
         free(train_instruct);
 
         ht_add(documentos, doc_get_arquivo(doc), doc);
+
+        doc_dispose(doc);
     }
     free(buffer);
     free(traincpy);

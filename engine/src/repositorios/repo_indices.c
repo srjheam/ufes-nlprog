@@ -10,7 +10,8 @@
 
 #include "repo_indices.h"
 
-static void repoidx_salvaIndiceDocumentos(HashTable *idxDocumentos, FILE *fbin) {
+static void repoidx_salvaIndiceDocumentos(HashTable *idxDocumentos,
+                                          FILE *fbin) {
     // Salva a quantidade de documentos
     int idxDocumentosQty = ht_get_qty(idxDocumentos);
     if (fwrite(&idxDocumentosQty, sizeof idxDocumentosQty, 1, fbin) != 1) {
@@ -158,12 +159,179 @@ static void repoidx_salvaIndicePalavras(HashTable *idxPalavras, FILE *fbin) {
     free(saveptr);
 }
 
-static HashTable *repoidx_carregaIndicePalavras(FILE *fbin) {
+static HashTable *repoidx_carregaIndiceDocumentos(FILE *fbin) {
+    int docQty = 0;
+    size_t qsize = sizeof docQty;
+    if (fread(&docQty, qsize, 1, fbin) != 1) {
+        exception_throw_failure("Erro ao carregar qtyDoc do indice no bin - em "
+                                "engine/repositorios/"
+                                "repo_indices.repoidx_carregaIndiceDocumentos");
+    }
 
+    // HashTable<string, Documento>
+    HashTable *idxDocumentos =
+        ht_init((cpy_fn)strdup, (cpy_fn)doc_cpy, (cmp_fn)strcmp, (free_fn)free,
+                (free_fn)doc_dispose);
+
+    for (int i = 0; i < docQty; i++) {
+        char *nome = NULL;
+        size_t nlen = 0;
+        if (getdelim(&nome, &nlen, '\0', fbin) == -1) {
+            exception_throw_failure(
+                "Erro ao carregar nomeDoc do indice no bin - em "
+                "engine/repositorios/"
+                "repo_indices.repoidx_carregaIndiceDocumentos");
+        }
+
+        char *classe = NULL;
+        nlen = 0;
+        if (getdelim(&classe, &nlen, '\0', fbin) == -1) {
+            exception_throw_failure(
+                "Erro ao carregar classe do indice no bin - em "
+                "engine/repositorios/"
+                "repo_indices.repoidx_carregaIndiceDocumentos");
+        }
+
+        int refPalQty = 0;
+        size_t qsize = sizeof refPalQty;
+        if (fread(&refPalQty, qsize, 1, fbin) != 1) {
+            exception_throw_failure(
+                "Erro ao carregar refPalQty do indice no bin - em "
+                "engine/repositorios/"
+                "repo_indices.repoidx_carregaIndiceDocumentos");
+        }
+
+        // HashTable<string, RefPalavra>
+        HashTable *refPalavras =
+            ht_init((cpy_fn)strdup, (cpy_fn)refpalavra_cpy, (cmp_fn)strcmp,
+                    (free_fn)free, (free_fn)refpalavra_dispose);
+
+        for (int j = 0; j < refPalQty; j++) {
+            char *palavra = NULL;
+            size_t nlen = 0;
+            if (getdelim(&palavra, &nlen, '\0', fbin) == -1) {
+                exception_throw_failure(
+                    "Erro ao carregar palavra do indice no bin - em "
+                    "engine/repositorios/"
+                    "repo_indices.repoidx_carregaIndiceDocumentos");
+            }
+
+            int freq = 0;
+            size_t qsize = sizeof freq;
+            if (fread(&freq, qsize, 1, fbin) != 1) {
+                exception_throw_failure(
+                    "Erro ao carregar freq do indice no bin - em "
+                    "engine/repositorios/"
+                    "repo_indices.repoidx_carregaIndiceDocumentos");
+            }
+
+            RefPalavra *ref = refpalavra_init(palavra, freq);
+
+            ht_add(refPalavras, palavra, ref);
+
+            free(palavra);
+            refpalavra_dispose(ref);
+        }
+
+        Documento *doc = doc_init(nome, classe, refPalavras);
+
+        free(classe);
+        ht_dispose(refPalavras);
+
+        ht_add(idxDocumentos, nome, doc);
+
+        free(nome);
+        doc_dispose(doc);
+    }
+
+    return idxDocumentos;
 }
 
 static HashTable *repoidx_carregaIndicePalavras(FILE *fbin) {
+    int palQty = 0;
+    size_t qsize = sizeof palQty;
+    if (fread(&palQty, qsize, 1, fbin) != 1) {
+        exception_throw_failure("Erro ao carregar palQty do indice no bin - em "
+                                "engine/repositorios/"
+                                "repo_indices.repoidx_carregaIndicePalavras");
+    }
 
+    // HashTable<string, Palavra>
+    HashTable *idxPalavras =
+        ht_init((cpy_fn)strdup, (cpy_fn)palavra_cpy, (cmp_fn)strcmp,
+                (free_fn)free, (free_fn)palavra_dispose);
+
+    for (int i = 0; i < palQty; i++) {
+        char *palavra = NULL;
+        size_t nlen = 0;
+        if (getdelim(&palavra, &nlen, '\0', fbin) == -1) {
+            exception_throw_failure(
+                "Erro ao carregar palavra do indice no bin - em "
+                "engine/repositorios/"
+                "repo_indices.repoidx_carregaIndicePalavras");
+        }
+
+        int refDocQty = 0;
+        size_t qsize = sizeof refDocQty;
+        if (fread(&refDocQty, qsize, 1, fbin) != 1) {
+            exception_throw_failure(
+                "Erro ao carregar refDocQty do indice no bin - em "
+                "engine/repositorios/"
+                "repo_indices.repoidx_carregaIndicePalavras");
+        }
+
+        // HashTable<string, RefDocumento>
+        HashTable *refDocumentos =
+            ht_init((cpy_fn)strdup, (cpy_fn)refdoc_cpy, (cmp_fn)strcmp,
+                    (free_fn)free, (free_fn)refdoc_dispose);
+
+        for (int j = 0; j < refDocQty; j++) {
+            char *documento = NULL;
+            size_t nlen = 0;
+            if (getdelim(&documento, &nlen, '\0', fbin) == -1) {
+                exception_throw_failure(
+                    "Erro ao carregar documento do indice no bin - em "
+                    "engine/repositorios/"
+                    "repo_indices.repoidx_carregaIndicePalavras");
+            }
+
+            int freq = 0;
+            qsize = sizeof freq;
+            if (fread(&freq, qsize, 1, fbin) != 1) {
+                exception_throw_failure(
+                    "Erro ao carregar freq do indice no bin - em "
+                    "engine/repositorios/"
+                    "repo_indices.repoidx_carregaIndicePalavras");
+            }
+
+            float tfIdf = 0;
+            size_t qsize = sizeof tfIdf;
+            if (fread(&tfIdf, qsize, 1, fbin) != 1) {
+                exception_throw_failure(
+                    "Erro ao carregar tfIdf do indice no bin - em "
+                    "engine/repositorios/"
+                    "repo_indices.repoidx_carregaIndicePalavras");
+            }
+
+            RefDocumento *ref = refdoc_init(documento, freq, tfIdf);
+
+            ht_add(refDocumentos, documento, ref);
+
+            free(documento);
+            refdoc_dispose(ref);
+        }
+
+        Palavra *pal = palavra_init(palavra, refDocumentos);
+
+        ht_dispose(refDocumentos);
+
+        ht_add(idxPalavras, palavra, pal);
+
+        free(palavra);
+        palavra_dispose(pal);
+    }
+
+    return idxPalavras;
 }
 
 void repoidx_salvaIndice(Indice *idx, const char *arquivo) {
@@ -183,10 +351,10 @@ void repoidx_salvaIndice(Indice *idx, const char *arquivo) {
 }
 
 Indice *repoidx_carregaIndice(const char *arquivo) {
-    FILE *fbin = fopen(arquivo, "wb");
+    FILE *fbin = fopen(arquivo, "rb");
 
     // HashTable<string, Documento>
-    HashTable *idxDocumentos = repoidx_carregaIndiceDocumentos(fbin);    
+    HashTable *idxDocumentos = repoidx_carregaIndiceDocumentos(fbin);
 
     // HashTable<string, Palavra>
     HashTable *idxPalavras = repoidx_carregaIndicePalavras(fbin);
