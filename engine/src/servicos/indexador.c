@@ -44,6 +44,9 @@ Documento *indexador_criaDocumento(char *train_instruc) {
 
     Documento *doc = reponoticias_carregaDocumento(fdoc, nome, classe);
 
+    free(nome);
+    free(classe);
+
     fclose(fdoc);
 
     return doc;
@@ -132,6 +135,9 @@ HashTable *indexador_criaIdxPalavras(HashTable *idxDocumentos) {
                 refdoc_dispose(refdocumento);
 
                 Palavra *nova_palavra = palavra_init(palavra, refdocumentos);
+
+                ht_dispose(refdocumentos);
+
                 ht_add(idxPalavras, palavra, nova_palavra);
 
                 palavra_dispose(nova_palavra);
@@ -147,6 +153,8 @@ HashTable *indexador_criaIdxPalavras(HashTable *idxDocumentos) {
         free(saveptr);
     }
     free(saveptr);
+
+    ht_dispose(idxFreq);
 
     return idxPalavras;
 }
@@ -188,6 +196,9 @@ Indice *indexador_criaIndice(const char *trainPath) {
     HashTable *palavras = indexador_criaIdxPalavras(documentos);
 
     Indice *idx = indice_init(documentos, palavras);
+
+    ht_dispose(documentos);
+    ht_dispose(palavras);
 
     return idx;
 }
