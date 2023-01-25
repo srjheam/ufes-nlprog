@@ -5,6 +5,6 @@
 
 #include "documento.h"
 
-Documento *reponoticias_carregaDocumento(FILE *noticia, char *nome, char *classe);
+Documento *reponoticias_carregaDocumento(FILE *noticia, const char *nome, const char *classe);
 
 #endif

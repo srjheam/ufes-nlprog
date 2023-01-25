@@ -5,8 +5,8 @@
 
 #include "repo_noticias.h"
 
-Documento *reponoticias_carregaDocumento(FILE *noticia, char *nome,
-                                         char *classe) {
+Documento *reponoticias_carregaDocumento(FILE *noticia, const char *nome,
+                                         const char *classe) {
     char *buffer = NULL;
     size_t len = 0;
     if (getline(&buffer, &len, noticia) == -1) {
