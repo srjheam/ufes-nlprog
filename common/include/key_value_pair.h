@@ -44,6 +44,8 @@ const void *kvp_get_key(const KeyValuePair *pair);
  */
 void *kvp_get_value(const KeyValuePair *pair);
 
+void kvp_set_value(KeyValuePair *pair, const void *value);
+
 /**
  * @brief Adquire o ponteiro para o valor de @p pair
  * 

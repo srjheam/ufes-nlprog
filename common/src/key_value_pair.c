@@ -41,6 +41,11 @@ const void *kvp_get_key(const KeyValuePair *par) { return par->chave; }
 
 void *kvp_get_value(const KeyValuePair *par) { return par->valor; }
 
+void kvp_set_value(KeyValuePair *pair, const void *value) {
+    pair->liberaValor(pair->valor);
+    pair->valor = pair->copiaValor(value);
+}
+
 void **kvp_ptr_value(KeyValuePair *pair) { return &(pair->valor); }
 
 KeyValuePair *kvp_cpy(KeyValuePair *kvp) {
