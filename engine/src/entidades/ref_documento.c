@@ -1,30 +1,35 @@
 #include <stdlib.h>
+#include <string.h>
 
 #include "ref_documento.h"
 
 struct tRefDocumento {
-    int idDocumento;
+    char *documento;
     int freqPalavra;
     float tfIdf;
 };
 
-RefDocumento *refdoc_init(int id, int freq, float tfIdf) {
+RefDocumento *refdoc_init(const char *documento, int freq, float tfIdf) {
     RefDocumento *refdoc = malloc(sizeof *refdoc);
 
-    refdoc->idDocumento = id;
+    refdoc->documento = strdup(documento);
     refdoc->freqPalavra = freq;
     refdoc->tfIdf = tfIdf;
 
     return refdoc;
 }
 
-void refdoc_dispose(RefDocumento *refdoc) { free(refdoc); }
+void refdoc_dispose(RefDocumento *refdoc) {
+    free(refdoc->documento);
 
-RefDocumento *refdoc_cpy(RefDocumento *refdoc) {
-    return refdoc_init(refdoc->idDocumento, refdoc->freqPalavra, refdoc->tfIdf);
+    free(refdoc);
 }
 
-int refdoc_get_id(RefDocumento *refdoc) { return refdoc->idDocumento; }
+RefDocumento *refdoc_cpy(RefDocumento *refdoc) {
+    return refdoc_init(refdoc->documento, refdoc->freqPalavra, refdoc->tfIdf);
+}
+
+char *refdoc_get_documento(RefDocumento *refdoc) { return refdoc->documento; }
 
 int refdoc_get_freq(RefDocumento *refdoc) { return refdoc->freqPalavra; }
 

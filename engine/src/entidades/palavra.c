@@ -1,23 +1,21 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "lista.h"
+#include "hash_table.h"
 
 #include "palavra.h"
 
 struct tPalavra {
-    int id;
     char *conteudo;       // Palavra da palavra
-    Lista *refDocumentos; // Lista<RefDocumento>
+    HashTable *refDocumentos; // Lista<RefDocumento>
 };
 
-Palavra *palavra_init(int id, const char *conteudo,
-                      const Lista *refDocumentos) {
+Palavra *palavra_init(const char *conteudo,
+                      const HashTable *refDocumentos) {
     Palavra *palavra = malloc(sizeof *palavra);
 
-    palavra->id = id;
     palavra->conteudo = strdup(conteudo);
-    palavra->refDocumentos = lista_cpy(refDocumentos);
+    palavra->refDocumentos = ht_cpy(refDocumentos);
 
     return palavra;
 }
@@ -25,15 +23,17 @@ Palavra *palavra_init(int id, const char *conteudo,
 void palavra_dispose(Palavra *palavra) {
     free(palavra->conteudo);
 
-    lista_dispose(palavra->refDocumentos);
+    ht_dispose(palavra->refDocumentos);
 
     free(palavra);
 }
 
-int palavra_get_id(Palavra *palavra) { return palavra->id; }
-
 char *palavra_get_conteudo(Palavra *palavra) { return palavra->conteudo; }
 
-Lista *palavra_get_refDocumentos(Palavra *palavra) {
+HashTable *palavra_get_refDocumentos(Palavra *palavra) {
     return palavra->refDocumentos;
+}
+
+Palavra *palavra_cpy(const Palavra *palavra) {
+    return palavra_init(palavra->conteudo, palavra->refDocumentos);
 }

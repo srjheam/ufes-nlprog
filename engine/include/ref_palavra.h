@@ -3,14 +3,16 @@
 
 typedef struct tRefPalavra RefPalavra;
 
-RefPalavra *refpalavra_init(int id, int freq);
+RefPalavra *refpalavra_init(const char *palavra, int freq);
 
 void refpalavra_dispose(RefPalavra *refpalavra);
 
 RefPalavra *refpalavra_cpy(RefPalavra *refpalavra);
 
-int refpalavra_get_id(RefPalavra *refpalavra);
+char *refpalavra_get_palavra(RefPalavra *refpalavra);
 
 int refpalavra_get_freq(RefPalavra *refpalavra);
+
+void refpalavra_incrementaFreqPor(RefPalavra *refpalavra, int value);
 
 #endif

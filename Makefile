@@ -24,7 +24,7 @@ VALGRINDOUT      = valgrind-out.txt
 # CCompiler - é o compilador usado
 # CFLAGS    - são as flags dadas ao compilador durante a compilação
 CC = gcc
-override CFLAGS += -lm -Wall -Wall -Wextra -Werror -pedantic -ggdb3 -I$(LIBCOMMONINCLUDE) -I$(LIBENGINEINCLUDE)
+override CFLAGS += -Wall -Wall -Wextra -Werror -pedantic -ggdb3 -I$(LIBCOMMONINCLUDE) -I$(LIBENGINEINCLUDE) -lm
 
 # Make - é o GNU Make
 MAKE = make
@@ -33,13 +33,13 @@ all : pre-build build
 
 # Compila o executável e linka as bibliotecas
 nlindexa: nlindexa.c
-	$(CC) $(CFLAGS) -o $@ $< -L $(LIBCOMMONDIR)/ -l$(LIBCOMMON) -L $(LIBENGINEDIR)/ -l$(LIBENGINE)
+	$(CC) -o $@ $< -L $(LIBCOMMONDIR)/ -l$(LIBCOMMON) -L $(LIBENGINEDIR)/ -l$(LIBENGINE) $(CFLAGS)
 
 nlbusca: nlbusca.c
-	$(CC) $(CFLAGS) -o $@ $< -L $(LIBCOMMONDIR)/ -l$(LIBCOMMON) -L $(LIBENGINEDIR)/ -l$(LIBENGINE)
+	$(CC) -o $@ $< -L $(LIBCOMMONDIR)/ -l$(LIBCOMMON) -L $(LIBENGINEDIR)/ -l$(LIBENGINE) $(CFLAGS)
 
 nltesta: nltesta.c
-	$(CC) $(CFLAGS) -o $@ $< -L $(LIBCOMMONDIR)/ -l$(LIBCOMMON) -L $(LIBENGINEDIR)/ -l$(LIBENGINE)
+	$(CC) -o $@ $< -L $(LIBCOMMONDIR)/ -l$(LIBCOMMON) -L $(LIBENGINEDIR)/ -l$(LIBENGINE) $(CFLAGS)
 
 # Chama os submakefiles garantindo a compilação das bibliotecas
 pre-build:

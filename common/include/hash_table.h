@@ -1,6 +1,7 @@
 #ifndef _HT_
 #define _HT_
 
+#include "key_value_pair.h"
 #include "lista.h"
 #include "types.h"
 
@@ -9,12 +10,15 @@ typedef struct tHashTable HashTable;
 /**
  * @brief Inicializa dinamicamente uma @ref HashTable
  *
+ * @param copiaChave Uma função copiadora da chave da @p ht
+ * @param copiaValor Uma função copiadora do valor da @p ht
  * @param comparadorChaves Uma função comparadora das chaves da @ref HashTable
  * @param liberaChaves Uma função destrutora das chaves da @ref HashTable
  * @param liberaValores Uma função destrutora dos valores da @ref HashTable
  * @return HashTable* Uma nova instancia de @ref HashTable
  */
-HashTable *ht_init(cmp_fn comparadorChaves, free_fn liberaChaves,
+HashTable *ht_init(cpy_fn copiaChave, cpy_fn copiaValor,
+                   cmp_fn comparadorChaves, free_fn liberaChaves,
                    free_fn liberaValores);
 
 /**
@@ -26,14 +30,17 @@ HashTable *ht_init(cmp_fn comparadorChaves, free_fn liberaChaves,
 void ht_dispose(HashTable *ht);
 
 /**
- * @brief Acessa o valor da @p ht pelo sua chave
+ * @brief Acessa o valor da @p ht pelo sua chave e armazena @p value nele
  *
  * @param ht Uma instancia de @ref HashTable
  * @param chave A chave nessa @p ht
- * @param copiaChave Uma função copiadora da chave da @p ht
- * @return void** Ponteiro para o valor nessa chave - valor pode ser nulo.
+ * @param value Valor nessa chave
  */
-void **ht_index(HashTable *ht, const void *chave, cpy_fn copiaChave);
+void ht_add(HashTable *ht, const void *chave, const void *value);
+
+void *ht_get(HashTable *ht, const void *chave);
+
+int ht_get_qty(HashTable *ht);
 
 /**
  * @brief Adquire todos os pares chave valor dessa @p ht
@@ -43,6 +50,10 @@ void **ht_index(HashTable *ht, const void *chave, cpy_fn copiaChave);
  */
 Lista *ht_get_allkvps(HashTable *ht);
 
+KeyValuePair *ht_iter(HashTable *ht, int *saveptr);
+
 HashTable *ht_cpy(const HashTable *ht);
+
+int *lib_intdup(const int *n);
 
 #endif
