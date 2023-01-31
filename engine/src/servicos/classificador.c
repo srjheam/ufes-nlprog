@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "extlib.h"
 #include "hash_table.h"
 #include "indexador.h"
 
@@ -13,10 +14,11 @@ Documento *classificador_classificaDocumento(Documento *doc, Indice* idx) {
 
     HashTable *idxPalavras = indexador_criaIdxPalavras(docs);
 
-    HashTable *similaridadeDocumenotos = ht_init((cpy_fn)strdup, (cpy_fn)lib_intdup, (cmp_fn)strcmp, (free_fn)free, (free_fn)free);
+    // HashTable<string, float>
+    HashTable *similaridadeDocumentos = ht_init((cpy_fn)strdup, (cpy_fn)intdup, (cmp_fn)strcmp, (free_fn)free, (free_fn)free);
 
     ht_dispose(idxPalavras);
-    ht_dispose(similaridadeDocumenotos);
+    ht_dispose(similaridadeDocumentos);
 
     return doc;
 }
