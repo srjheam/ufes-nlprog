@@ -54,6 +54,4 @@ KeyValuePair *ht_iter(HashTable *ht, int *saveptr);
 
 HashTable *ht_cpy(const HashTable *ht);
 
-int *lib_intdup(const int *n);
-
 #endif
