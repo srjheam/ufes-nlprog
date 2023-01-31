@@ -14,6 +14,8 @@
 
 #include "indice.h"
 
+HashTable *indexador_criaIdxPalavras(HashTable *idxDocumentos);
+
 Indice *indexador_criaIndice(const char *train);
 
 #endif // _INDEXADOR_
