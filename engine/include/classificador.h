@@ -4,6 +4,6 @@
 #include "documento.h"
 #include "indice.h"
 
-Documento *classificador_classificaDocumento(Documento *doc, Indice* idx);
+char *classificador_classificaDocumento(Documento *doc, Indice* idx, int k);
 
 #endif
