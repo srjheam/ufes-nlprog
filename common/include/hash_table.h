@@ -50,6 +50,8 @@ int ht_get_qty(HashTable *ht);
  */
 Lista *ht_get_allkvps(HashTable *ht);
 
+Lista *ht_to_list(HashTable *ht);
+
 KeyValuePair *ht_iter(HashTable *ht, int *saveptr);
 
 HashTable *ht_cpy(const HashTable *ht);
