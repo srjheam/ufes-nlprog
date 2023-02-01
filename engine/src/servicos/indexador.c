@@ -183,6 +183,8 @@ Indice *indexador_criaIndice(const char *trainPath) {
         snprintf(train_instruct, pathSize, "%s/%s", basePath, buffer);
 
         Documento *doc = indexador_criaDocumento(train_instruct);
+        if (doc == NULL)
+            continue;
 
         free(train_instruct);
 
