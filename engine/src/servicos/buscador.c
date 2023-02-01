@@ -14,8 +14,8 @@
 #include "buscador.h"
 
 Lista *BuscaNoticias(char *query, Indice *idx) {
-    if (query[strlen(query)] == '\n')
-        query[strlen(query)] = '\0';
+    if (query[strlen(query) - 1] == '\n')
+        query[strlen(query) - 1] = '\0';
 
     // HashTable <string, float>
     HashTable *documentos =
