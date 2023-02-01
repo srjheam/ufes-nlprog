@@ -77,6 +77,8 @@ int ht_get_qty(HashTable *ht) { return lista_get_quantidade(ht->pares); }
 
 Lista *ht_toList(HashTable *ht) { return lista_cpy(ht->pares); }
 
+Lista *ht_to_list(HashTable *ht){ return ht->pares; }
+
 HashTable *ht_cpy(const HashTable *ht) {
     HashTable *cpy =
         ht_init(ht->copiaChave, ht->copiaValor, ht->comparadorChaves,
