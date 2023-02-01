@@ -11,7 +11,7 @@
 
 static int anonfn_sortKvpStrFloatDesc(const KeyValuePair *a,
                                       const KeyValuePair *b) {
-    return *(float *)kvp_get_value(b) - *(float *)kvp_get_value(a);
+    return *(float *)kvp_get_value(b) * 1e6 - *(float *)kvp_get_value(a) * 1e6;
 }
 
 static int anonfn_sortKvpStrIntDesc(const KeyValuePair *a,
