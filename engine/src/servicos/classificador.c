@@ -1,6 +1,6 @@
+#include <math.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
 
 #include "extlib.h"
 #include "hash_table.h"
@@ -75,10 +75,16 @@ char *classificador_classificaDocumento(Documento *documento, Indice *idx,
         while ((currPalavra = ht_iter(doc_get_refPalavras(doc), &saveptr)) !=
                NULL) {
             // tfIdf do documento a ser classificado
-            float documentoTfIdf = refdoc_get_tdIdf(
+            float documentoTfIdf = 0;
+
+            // adquire o refdoc do documento a ser classificado
+            RefDocumento *documentoRefDoc =
                 ht_get(palavra_get_refDocumentos(
                            ht_get(idxPalavras, kvp_get_key(currPalavra))),
-                       nomeDocumento));
+                       nomeDocumento);
+
+            if (documentoRefDoc != NULL)
+                documentoTfIdf = refdoc_get_tdIdf(documentoRefDoc);
 
             // tfIdf do documento atual
             float currDocTfIdf = refdoc_get_tdIdf(
