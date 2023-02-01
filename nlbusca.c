@@ -28,7 +28,7 @@ int main(int argc, char const *argv[]) {
 
     char op = '\0';
     scanf("%c%*c", &op);
-    
+
     system("clear");
     switch (op) {
     case 'q':
@@ -37,14 +37,6 @@ int main(int argc, char const *argv[]) {
 
     case 'c':
         printf("Informe o texto da notícia:\n");
-
-        char *line = NULL;
-        size_t len = 0;
-        ssize_t read = getline(&line, &len, stdin);
-
-        if (read == -1)
-            exception_throw_failure(
-                "Erro ao ler texto notícia. Saindo do programa...\n");
 
         Documento *inNoticia =
             reponoticias_carregaDocumento(stdin, "input", "tbd");
@@ -55,7 +47,6 @@ int main(int argc, char const *argv[]) {
 
         free(classe);
         doc_dispose(inNoticia);
-        free(line);
         break;
 
     case 'f':
