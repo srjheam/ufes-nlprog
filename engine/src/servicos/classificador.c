@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 #include "extlib.h"
 #include "hash_table.h"
@@ -44,7 +45,7 @@ char *classificador_classificaDocumento(Documento *documento, Indice *idx,
     int saveptr = 0;
     while ((currPalavra = ht_iter(doc_get_refPalavras(documento), &saveptr)) !=
            NULL) {
-        char *palavra = refpalavra_get_palavra(currPalavra);
+        char *palavra = refpalavra_get_palavra(kvp_get_value(currPalavra));
 
         float tfIdf = refdoc_get_tdIdf(
             ht_get(palavra_get_refDocumentos(ht_get(idxPalavras, palavra)),
@@ -113,7 +114,7 @@ char *classificador_classificaDocumento(Documento *documento, Indice *idx,
 
     for (int i = 0; i < k && i < lista_get_quantidade(listaSimilaridade); i++) {
         KeyValuePair *kvp = lista_get_elemento(listaSimilaridade, i);
-        char *docNome = kvp_get_key(kvp);
+        const char *docNome = kvp_get_key(kvp);
 
         Documento *doc = ht_get(docsIdx, docNome);
 
