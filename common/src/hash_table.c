@@ -75,7 +75,7 @@ void *ht_get(HashTable *ht, const void *chave) {
 
 int ht_get_qty(HashTable *ht) { return lista_get_quantidade(ht->pares); }
 
-Lista *ht_get_allkvps(HashTable *ht) { return ht->pares; }
+Lista *ht_toList(HashTable *ht) { return lista_cpy(ht->pares); }
 
 Lista *ht_to_list(HashTable *ht){ return ht->pares; }
 
@@ -97,14 +97,4 @@ KeyValuePair *ht_iter(HashTable *ht, int *saveptr) {
     *saveptr += 1;
 
     return kvp;
-}
-
-int *lib_intdup(const int *n) {
-    int *dup = malloc(sizeof *dup);
-    if (dup == NULL)
-        exception_throw_OutOfMemory("intdup malloc failed");
-
-    *dup = *n;
-
-    return dup;
 }
