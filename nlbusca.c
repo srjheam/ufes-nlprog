@@ -26,10 +26,10 @@ int main(int argc, char const *argv[]) {
            "[l] - Relatório de documentos\n"
            "Escolha uma opção: ");
 
-    system("clear");
-
     char op = '\0';
     scanf("%c%*c", &op);
+    
+    system("clear");
     switch (op) {
     case 'q':
 
