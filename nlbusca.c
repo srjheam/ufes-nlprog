@@ -2,10 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "classificador.h"
 #include "exception.h"
 #include "hash_table.h"
 #include "parser.h"
 #include "repo_indices.h"
+#include "repo_noticias.h"
 
 int main(int argc, char const *argv[]) {
     if (argc != 3)
@@ -14,7 +16,7 @@ int main(int argc, char const *argv[]) {
             "Couldn't find command line argument for binary file or K-onstant",
             EXIT_FAILURE);
 
-    int *k = parseInt(argv[2]);
+    int k = parseInt(argv[2]);
 
     Indice *idx = repoidx_carregaIndice(argv[1]);
 
@@ -30,11 +32,30 @@ int main(int argc, char const *argv[]) {
     scanf("%c%*c", op);
     switch (op) {
     case 'q':
-        
+
         break;
 
     case 'c':
-        
+        printf("Informe o texto da notícia:\n");
+
+        char *line = NULL;
+        size_t len = 0;
+        ssize_t read = getline(&line, &len, stdin);
+
+        if (read == -1)
+            exception_throw_failure(
+                "Erro ao ler texto notícia. Saindo do programa...\n");
+
+        Documento *inNoticia =
+            reponoticias_carregaDocumento(stdin, "input", "tbd");
+
+        char *classe = classificador_classificaDocumento(inNoticia, idx, k);
+
+        printf("\n\nA notícia pertence à classe '%s'\n", classe);
+
+        free(classe);
+        doc_dispose(inNoticia);
+        free(line);
         break;
 
     case 'f':
