@@ -167,6 +167,8 @@ Indice *indexador_criaIndice(const char *trainPath) {
                 (free_fn)doc_dispose);
 
     FILE *train = fopen(trainPath, "r");
+    if (train == NULL)
+        exception_throw_failure("Falha ao abrir arquivo train.txt");
 
     char *traincpy = strdup(trainPath);
     char *basePath = dirname(traincpy);
