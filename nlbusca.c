@@ -29,7 +29,7 @@ int main(int argc, char const *argv[]) {
     system("clear");
 
     char op = '\0';
-    scanf("%c%*c", op);
+    scanf("%c%*c", &op);
     switch (op) {
     case 'q':
 
@@ -67,14 +67,12 @@ int main(int argc, char const *argv[]) {
         break;
 
     default:
-        free(k);
         indice_dispose(idx);
 
         exception_throw_failure("Opção inválida. Saindo do programa...\n");
         break;
     }
 
-    free(k);
     indice_dispose(idx);
 
     return EXIT_SUCCESS;
