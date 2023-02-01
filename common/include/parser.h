@@ -25,6 +25,6 @@ bool tryParseInt(const char *str, int *val);
  */
 bool tryParseFloat(const char *str, float *val);
 
-int *parseInt(const char *str);
+int parseInt(const char *str);
 
 #endif

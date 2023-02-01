@@ -30,22 +30,20 @@ bool tryParseFloat(const char *str, float *val) {
     return true;
 }
 
-int *parseInt(const char *str) {
+int parseInt(const char *str) {
     // Check
     // - https://stackoverflow.com/a/9748431/12511877
 
     char *endptr;
-    int *num = malloc(sizeof *num);
 
     errno = 0;
     long conv = strtol(str, &endptr, 10);
 
     if (errno != 0 || *endptr != '\0' || conv > INT_MAX || conv < INT_MIN) {
         exception_throw("ArgumentException",
-                        "Invalid integer string at - mylib.lib_parseInt",
+                        "Invalid integer string at - parser.parseInt",
                         EXIT_FAILURE);
-    } else
-        *num = conv;
+    }
 
-    return num;
+    return conv;
 }
