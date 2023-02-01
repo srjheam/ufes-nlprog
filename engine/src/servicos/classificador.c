@@ -106,7 +106,7 @@ char *classificador_classificaDocumento(Documento *documento, Indice *idx,
     ht_dispose(idxPalavras);
 
     // Lista<KeyValuePair<string, float>>
-    Lista *listaSimilaridade = ht_toList(similaridadeDocumentos);
+    Lista *listaSimilaridade = ht_to_list(similaridadeDocumentos);
 
     ht_dispose(similaridadeDocumentos);
 
@@ -140,7 +140,7 @@ char *classificador_classificaDocumento(Documento *documento, Indice *idx,
     lista_dispose(listaSimilaridade);
 
     // Lista<KeyValuePair<string, int>>
-    Lista *listaFreqClasseDocumentos = ht_toList(freqClasseDocumentos);
+    Lista *listaFreqClasseDocumentos = ht_to_list(freqClasseDocumentos);
 
     ht_dispose(freqClasseDocumentos);
 
