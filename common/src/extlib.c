@@ -23,3 +23,16 @@ float *floatdup(const float *f) {
 
     return dup;
 }
+
+size_t hashStr(unsigned char *str) {
+    // Check this out:
+    // - https://stackoverflow.com/a/7666577/12511877
+
+    unsigned long hash = 5381;
+    int c;
+
+    while ((c = *str++))
+        hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+
+    return hash;
+}
