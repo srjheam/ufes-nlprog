@@ -55,8 +55,9 @@ Documento *indexador_criaDocumento(char *train_instruc) {
 
 HashTable *indexador_criaIdxPalavras(HashTable *idxDocumentos) {
     // KeyValuePair<string, int*>
-    HashTable *idxFreq = ht_init((cpy_fn)strdup, (cpy_fn)intdup,
-                                 (cmp_fn)strcmp, (free_fn)free, (free_fn)free);
+    HashTable *idxFreq =
+        ht_init((hash_fn)hashStr, (cpy_fn)strdup, (cpy_fn)intdup,
+                (cmp_fn)strcmp, (free_fn)free, (free_fn)free);
 
     // KeyValuePair<string, Documento>
     KeyValuePair *curr = NULL;
@@ -91,8 +92,8 @@ HashTable *indexador_criaIdxPalavras(HashTable *idxDocumentos) {
 
     // HashTable<string, Palavra>
     HashTable *idxPalavras =
-        ht_init((cpy_fn)strdup, (cpy_fn)palavra_cpy, (cmp_fn)strcmp,
-                (free_fn)free, (free_fn)palavra_dispose);
+        ht_init((hash_fn)hashStr, (cpy_fn)strdup, (cpy_fn)palavra_cpy,
+                (cmp_fn)strcmp, (free_fn)free, (free_fn)palavra_dispose);
 
     saveptr = calloc(1, sizeof *saveptr);
     curr = NULL;
@@ -127,9 +128,9 @@ HashTable *indexador_criaIdxPalavras(HashTable *idxDocumentos) {
             Palavra *pal = ht_get(idxPalavras, palavra);
             if (pal == NULL) {
                 // HashTable<string, RefDocumento>
-                HashTable *refdocumentos =
-                    ht_init((cpy_fn)strdup, (cpy_fn)refdoc_cpy, (cmp_fn)strcmp,
-                            (free_fn)free, (free_fn)refdoc_dispose);
+                HashTable *refdocumentos = ht_init(
+                    (hash_fn)hashStr, (cpy_fn)strdup, (cpy_fn)refdoc_cpy,
+                    (cmp_fn)strcmp, (free_fn)free, (free_fn)refdoc_dispose);
 
                 ht_insert(refdocumentos, documento, refdocumento);
 
@@ -163,8 +164,8 @@ HashTable *indexador_criaIdxPalavras(HashTable *idxDocumentos) {
 Indice *indexador_criaIndice(const char *trainPath) {
     // HashTable<string, Documento>
     HashTable *documentos =
-        ht_init((cpy_fn)strdup, (cpy_fn)doc_cpy, (cmp_fn)strcmp, (free_fn)free,
-                (free_fn)doc_dispose);
+        ht_init((hash_fn)hashStr, (cpy_fn)strdup, (cpy_fn)doc_cpy,
+                (cmp_fn)strcmp, (free_fn)free, (free_fn)doc_dispose);
 
     FILE *train = fopen(trainPath, "r");
     if (train == NULL)

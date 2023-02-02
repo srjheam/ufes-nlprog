@@ -2,6 +2,7 @@
 #include <string.h>
 
 #include "documento.h"
+#include "extlib.h"
 
 #include "repo_noticias.h"
 
@@ -19,8 +20,8 @@ Documento *reponoticias_carregaDocumento(FILE *noticia, const char *nome,
 
     // HashTable<string, RefPalavra>
     HashTable *refPalavras =
-        ht_init((cpy_fn)strdup, (cpy_fn)refpalavra_cpy, (cmp_fn)strcmp,
-                (free_fn)free, (free_fn)refpalavra_dispose);
+        ht_init((hash_fn)hashStr, (cpy_fn)strdup, (cpy_fn)refpalavra_cpy,
+                (cmp_fn)strcmp, (free_fn)free, (free_fn)refpalavra_dispose);
 
     char *saveptr = NULL, *token = NULL;
     int i;

@@ -34,7 +34,7 @@ char *classificador_classificaDocumento(Documento *documento, Indice *idx,
 
     // HashTable<string, float>
     HashTable *similaridadeDocumentos =
-        ht_init((cpy_fn)strdup, (cpy_fn)floatdup, (cmp_fn)strcmp, (free_fn)free,
+        ht_init((hash_fn)hashStr, (cpy_fn)strdup, (cpy_fn)floatdup, (cmp_fn)strcmp, (free_fn)free,
                 (free_fn)free);
     // Associa identificador de um documento no indice com a similaridade entre
     // ele e o ducumento a ser classificado
@@ -114,7 +114,7 @@ char *classificador_classificaDocumento(Documento *documento, Indice *idx,
 
     // HashTable<string, int>
     HashTable *freqClasseDocumentos =
-        ht_init((cpy_fn)strdup, (cpy_fn)intdup, (cmp_fn)strcmp, (free_fn)free,
+        ht_init((hash_fn)hashStr, (cpy_fn)strdup, (cpy_fn)intdup, (cmp_fn)strcmp, (free_fn)free,
                 (free_fn)free);
     // Agrega a frequencia das classes dos k documentos mais similares
 

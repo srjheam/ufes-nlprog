@@ -19,7 +19,7 @@ Lista *BuscaNoticias(char *query, Indice *idx) {
 
     // HashTable <string, float>
     HashTable *documentos =
-        ht_init((cpy_fn)strdup, (cpy_fn)intdup, (cmp_fn)strcmp, (free_fn)free,
+        ht_init((hash_fn)hashStr, (cpy_fn)strdup, (cpy_fn)intdup, (cmp_fn)strcmp, (free_fn)free,
                 (free_fn)free);
 
     char *saveptr = NULL, *token = NULL;

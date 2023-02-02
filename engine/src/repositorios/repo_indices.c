@@ -4,6 +4,7 @@
 
 #include "documento.h"
 #include "exception.h"
+#include "extlib.h"
 #include "palavra.h"
 #include "ref_documento.h"
 #include "ref_palavra.h"
@@ -170,8 +171,8 @@ static HashTable *repoidx_carregaIndiceDocumentos(FILE *fbin) {
 
     // HashTable<string, Documento>
     HashTable *idxDocumentos =
-        ht_init((cpy_fn)strdup, (cpy_fn)doc_cpy, (cmp_fn)strcmp, (free_fn)free,
-                (free_fn)doc_dispose);
+        ht_init((hash_fn)hashStr, (cpy_fn)strdup, (cpy_fn)doc_cpy,
+                (cmp_fn)strcmp, (free_fn)free, (free_fn)doc_dispose);
 
     for (int i = 0; i < docQty; i++) {
         char *nome = NULL;
@@ -203,7 +204,7 @@ static HashTable *repoidx_carregaIndiceDocumentos(FILE *fbin) {
 
         // HashTable<string, RefPalavra>
         HashTable *refPalavras =
-            ht_init((cpy_fn)strdup, (cpy_fn)refpalavra_cpy, (cmp_fn)strcmp,
+            ht_init((hash_fn)hashStr, (cpy_fn)strdup, (cpy_fn)refpalavra_cpy, (cmp_fn)strcmp,
                     (free_fn)free, (free_fn)refpalavra_dispose);
 
         for (int j = 0; j < refPalQty; j++) {
@@ -258,7 +259,7 @@ static HashTable *repoidx_carregaIndicePalavras(FILE *fbin) {
 
     // HashTable<string, Palavra>
     HashTable *idxPalavras =
-        ht_init((cpy_fn)strdup, (cpy_fn)palavra_cpy, (cmp_fn)strcmp,
+        ht_init((hash_fn)hashStr, (cpy_fn)strdup, (cpy_fn)palavra_cpy, (cmp_fn)strcmp,
                 (free_fn)free, (free_fn)palavra_dispose);
 
     for (int i = 0; i < palQty; i++) {
@@ -282,7 +283,7 @@ static HashTable *repoidx_carregaIndicePalavras(FILE *fbin) {
 
         // HashTable<string, RefDocumento>
         HashTable *refDocumentos =
-            ht_init((cpy_fn)strdup, (cpy_fn)refdoc_cpy, (cmp_fn)strcmp,
+            ht_init((hash_fn)hashStr, (cpy_fn)strdup, (cpy_fn)refdoc_cpy, (cmp_fn)strcmp,
                     (free_fn)free, (free_fn)refdoc_dispose);
 
         for (int j = 0; j < refDocQty; j++) {
