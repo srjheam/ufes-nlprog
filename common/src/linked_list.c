@@ -1,6 +1,7 @@
 #include <stdlib.h>
 
 #include "node.h"
+#include "exception.h"
 
 #include "linked_list.h"
 
@@ -8,11 +9,11 @@ struct tLinkedList {
     Node *head;
     size_t length;
 
-    cpy_fn cpyValues;
-    free_fn disposeValues;
+    cpy_fn cpyValue;
+    free_fn disposeValue;
 };
 
-LinkedList *ll_init(cpy_fn cpyValues, free_fn disposeValues) {
+LinkedList *ll_init(cpy_fn cpyValue, free_fn disposeValue) {
     LinkedList *list = malloc(sizeof *list);
     if (list == NULL)
         exception_throw_OutOfMemory("LinkedList malloc failed");
@@ -20,8 +21,8 @@ LinkedList *ll_init(cpy_fn cpyValues, free_fn disposeValues) {
     list->head = NULL;
     list->length = 0;
 
-    list->cpyValues = cpyValues;
-    list->disposeValues = disposeValues;
+    list->cpyValue = cpyValue;
+    list->disposeValue = disposeValue;
 
     return list;
 }
@@ -31,7 +32,7 @@ void ll_dispose(LinkedList *list) {
     while (curr != NULL) {
         Node *next = node_get_next(curr);
 
-        list->disposeValues(node_get_data(curr));
+        list->disposeValue(node_get_data(curr));
         node_i_dispose(curr);
 
         curr = next;
@@ -62,4 +63,17 @@ void *ll_iter(LinkedList *list, void **saveptr) {
     *saveptr = next;
 
     return *saveptr;
+}
+
+LinkedList *ll_cpy(const LinkedList *list) {
+    LinkedList *cpy = ll_init(list->cpyValue, list->disposeValue);
+    if (cpy == NULL)
+        exception_throw_OutOfMemory("LinkedList cpy failed");
+
+    void *saveptr = NULL;
+    Node *node = NULL;
+    while ((node = ll_iter((LinkedList *)list, &saveptr)) != NULL)
+        ll_append(cpy, list->cpyValue(node_get_data(node)));
+
+    return cpy;
 }
