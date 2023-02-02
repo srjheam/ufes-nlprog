@@ -52,6 +52,9 @@ void ll_append(LinkedList *list, void *data) {
 
 void *ll_iter(LinkedList *list, void **saveptr) {
     if (*saveptr == NULL) {
+        if (list->head == NULL)
+            return NULL;
+
         *saveptr = list->head;
         return node_get_data(*saveptr);
     }
