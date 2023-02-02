@@ -4,6 +4,7 @@
 
 #include "documento.h"
 #include "exception.h"
+#include "extlib.h"
 #include "palavra.h"
 #include "ref_documento.h"
 #include "ref_palavra.h"
@@ -13,7 +14,7 @@
 static void repoidx_salvaIndiceDocumentos(HashTable *idxDocumentos,
                                           FILE *fbin) {
     // Salva a quantidade de documentos
-    int idxDocumentosQty = ht_get_qty(idxDocumentos);
+    int idxDocumentosQty = ht_get_length(idxDocumentos);
     if (fwrite(&idxDocumentosQty, sizeof idxDocumentosQty, 1, fbin) != 1) {
         exception_throw_failure(
             "Erro ao salvar idxDocumentosQty do indice no bin - em "
@@ -22,8 +23,8 @@ static void repoidx_salvaIndiceDocumentos(HashTable *idxDocumentos,
 
     // KVP<string, Documento>
     KeyValuePair *curr = NULL;
-    int *saveptr = calloc(1, sizeof *saveptr);
-    while ((curr = ht_iter(idxDocumentos, saveptr)) != NULL) {
+    void *saveptr = NULL;
+    while ((curr = ht_iter(idxDocumentos, &saveptr)) != NULL) {
         Documento *doc = kvp_get_value(curr);
 
         // Salva nome de um documento com final '\0'
@@ -49,7 +50,7 @@ static void repoidx_salvaIndiceDocumentos(HashTable *idxDocumentos,
         HashTable *refPalavra = doc_get_refPalavras(doc);
 
         // Salva a quantidade de RefPalavra
-        int refPalavraQty = ht_get_qty(refPalavra);
+        int refPalavraQty = ht_get_length(refPalavra);
         if (fwrite(&refPalavraQty, sizeof refPalavraQty, 1, fbin) != 1) {
             exception_throw_failure(
                 "Erro ao salvar refPalavraQty do indice no bin - em "
@@ -59,8 +60,8 @@ static void repoidx_salvaIndiceDocumentos(HashTable *idxDocumentos,
 
         // KVP<string, RefPalavra>
         KeyValuePair *curr = NULL;
-        int *saveptr = calloc(1, sizeof *saveptr);
-        while ((curr = ht_iter(refPalavra, saveptr)) != NULL) {
+        void *saveptr = NULL;
+        while ((curr = ht_iter(refPalavra, &saveptr)) != NULL) {
             RefPalavra *ref = kvp_get_value(curr);
 
             // Salva palavra com final '\0'
@@ -82,14 +83,12 @@ static void repoidx_salvaIndiceDocumentos(HashTable *idxDocumentos,
                     "repo_indices.repoidx_salvaIndiceDocumentos");
             }
         }
-        free(saveptr);
     }
-    free(saveptr);
 }
 
 static void repoidx_salvaIndicePalavras(HashTable *idxPalavras, FILE *fbin) {
     // Salva a quantidade de palavras
-    int idxPalavrasQty = ht_get_qty(idxPalavras);
+    int idxPalavrasQty = ht_get_length(idxPalavras);
     if (fwrite(&idxPalavrasQty, sizeof idxPalavrasQty, 1, fbin) != 1) {
         exception_throw_failure(
             "Erro ao salvar idxPalavrasQty do indice no bin - em "
@@ -98,8 +97,8 @@ static void repoidx_salvaIndicePalavras(HashTable *idxPalavras, FILE *fbin) {
 
     // KVP<string, Palavra>
     KeyValuePair *curr = NULL;
-    int *saveptr = calloc(1, sizeof *saveptr);
-    while ((curr = ht_iter(idxPalavras, saveptr)) != NULL) {
+    void *saveptr = NULL;
+    while ((curr = ht_iter(idxPalavras, &saveptr)) != NULL) {
         Palavra *pal = kvp_get_value(curr);
 
         // Salva palavra com final '\0'
@@ -114,7 +113,7 @@ static void repoidx_salvaIndicePalavras(HashTable *idxPalavras, FILE *fbin) {
         HashTable *refDocumento = palavra_get_refDocumentos(pal);
 
         // Salva a quantidade de RefPalavra
-        int refDocumentoQty = ht_get_qty(refDocumento);
+        int refDocumentoQty = ht_get_length(refDocumento);
         if (fwrite(&refDocumentoQty, sizeof refDocumentoQty, 1, fbin) != 1) {
             exception_throw_failure(
                 "Erro ao salvar refDocumentoQty do indice no bin - em "
@@ -123,8 +122,8 @@ static void repoidx_salvaIndicePalavras(HashTable *idxPalavras, FILE *fbin) {
 
         // KVP<string, RefPalavra>
         KeyValuePair *curr = NULL;
-        int *saveptr = calloc(1, sizeof *saveptr);
-        while ((curr = ht_iter(refDocumento, saveptr)) != NULL) {
+        void *saveptr = NULL;
+        while ((curr = ht_iter(refDocumento, &saveptr)) != NULL) {
             RefDocumento *ref = kvp_get_value(curr);
 
             // Salva nome refdocumento com final '\0'
@@ -154,9 +153,7 @@ static void repoidx_salvaIndicePalavras(HashTable *idxPalavras, FILE *fbin) {
                     "repo_indices.repoidx_salvaIndicePalavras");
             }
         }
-        free(saveptr);
     }
-    free(saveptr);
 }
 
 static HashTable *repoidx_carregaIndiceDocumentos(FILE *fbin) {
@@ -170,8 +167,8 @@ static HashTable *repoidx_carregaIndiceDocumentos(FILE *fbin) {
 
     // HashTable<string, Documento>
     HashTable *idxDocumentos =
-        ht_init((cpy_fn)strdup, (cpy_fn)doc_cpy, (cmp_fn)strcmp, (free_fn)free,
-                (free_fn)doc_dispose);
+        ht_init((hash_fn)hashStr, (cpy_fn)strdup, (cpy_fn)doc_cpy,
+                (cmp_fn)strcmp, (free_fn)free, (free_fn)doc_dispose);
 
     for (int i = 0; i < docQty; i++) {
         char *nome = NULL;
@@ -203,7 +200,7 @@ static HashTable *repoidx_carregaIndiceDocumentos(FILE *fbin) {
 
         // HashTable<string, RefPalavra>
         HashTable *refPalavras =
-            ht_init((cpy_fn)strdup, (cpy_fn)refpalavra_cpy, (cmp_fn)strcmp,
+            ht_init((hash_fn)hashStr, (cpy_fn)strdup, (cpy_fn)refpalavra_cpy, (cmp_fn)strcmp,
                     (free_fn)free, (free_fn)refpalavra_dispose);
 
         for (int j = 0; j < refPalQty; j++) {
@@ -227,7 +224,7 @@ static HashTable *repoidx_carregaIndiceDocumentos(FILE *fbin) {
 
             RefPalavra *ref = refpalavra_init(palavra, freq);
 
-            ht_add(refPalavras, palavra, ref);
+            ht_insert(refPalavras, palavra, ref);
 
             free(palavra);
             refpalavra_dispose(ref);
@@ -238,7 +235,7 @@ static HashTable *repoidx_carregaIndiceDocumentos(FILE *fbin) {
         free(classe);
         ht_dispose(refPalavras);
 
-        ht_add(idxDocumentos, nome, doc);
+        ht_insert(idxDocumentos, nome, doc);
 
         free(nome);
         doc_dispose(doc);
@@ -258,7 +255,7 @@ static HashTable *repoidx_carregaIndicePalavras(FILE *fbin) {
 
     // HashTable<string, Palavra>
     HashTable *idxPalavras =
-        ht_init((cpy_fn)strdup, (cpy_fn)palavra_cpy, (cmp_fn)strcmp,
+        ht_init((hash_fn)hashStr, (cpy_fn)strdup, (cpy_fn)palavra_cpy, (cmp_fn)strcmp,
                 (free_fn)free, (free_fn)palavra_dispose);
 
     for (int i = 0; i < palQty; i++) {
@@ -282,7 +279,7 @@ static HashTable *repoidx_carregaIndicePalavras(FILE *fbin) {
 
         // HashTable<string, RefDocumento>
         HashTable *refDocumentos =
-            ht_init((cpy_fn)strdup, (cpy_fn)refdoc_cpy, (cmp_fn)strcmp,
+            ht_init((hash_fn)hashStr, (cpy_fn)strdup, (cpy_fn)refdoc_cpy, (cmp_fn)strcmp,
                     (free_fn)free, (free_fn)refdoc_dispose);
 
         for (int j = 0; j < refDocQty; j++) {
@@ -315,7 +312,7 @@ static HashTable *repoidx_carregaIndicePalavras(FILE *fbin) {
 
             RefDocumento *ref = refdoc_init(documento, freq, tfIdf);
 
-            ht_add(refDocumentos, documento, ref);
+            ht_insert(refDocumentos, documento, ref);
 
             free(documento);
             refdoc_dispose(ref);
@@ -325,7 +322,7 @@ static HashTable *repoidx_carregaIndicePalavras(FILE *fbin) {
 
         ht_dispose(refDocumentos);
 
-        ht_add(idxPalavras, palavra, pal);
+        ht_insert(idxPalavras, palavra, pal);
 
         free(palavra);
         palavra_dispose(pal);

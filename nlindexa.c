@@ -15,8 +15,8 @@ int main(int argc, char const *argv[]) {
 
     Indice *idx = indexador_criaIndice(argv[1]);
 
-    printf("Documentos indexados: %d\n", ht_get_qty(indice_get_documentos(idx)));
-    printf("Palavras indexadas: %d\n", ht_get_qty(indice_get_palavras(idx)));
+    printf("Documentos indexados: %lu\n", ht_get_length(indice_get_documentos(idx)));
+    printf("Palavras indexadas: %lu\n", ht_get_length(indice_get_palavras(idx)));
 
     repoidx_salvaIndice(idx, argv[2]);
 

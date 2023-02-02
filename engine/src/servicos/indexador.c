@@ -55,13 +55,14 @@ Documento *indexador_criaDocumento(char *train_instruc) {
 
 HashTable *indexador_criaIdxPalavras(HashTable *idxDocumentos) {
     // KeyValuePair<string, int*>
-    HashTable *idxFreq = ht_init((cpy_fn)strdup, (cpy_fn)intdup,
-                                 (cmp_fn)strcmp, (free_fn)free, (free_fn)free);
+    HashTable *idxFreq =
+        ht_init((hash_fn)hashStr, (cpy_fn)strdup, (cpy_fn)intdup,
+                (cmp_fn)strcmp, (free_fn)free, (free_fn)free);
 
     // KeyValuePair<string, Documento>
     KeyValuePair *curr = NULL;
-    int *saveptr = calloc(1, sizeof *saveptr);
-    while ((curr = ht_iter(idxDocumentos, saveptr)) != NULL) {
+    void *saveptr = NULL;
+    while ((curr = ht_iter(idxDocumentos, &saveptr)) != NULL) {
         Documento *doc = kvp_get_value(curr);
 
         // HashTable<string, RefPalavra>
@@ -69,8 +70,8 @@ HashTable *indexador_criaIdxPalavras(HashTable *idxDocumentos) {
 
         // KeyValuePair<string, RefPalavra>
         KeyValuePair *curr_refpalavra = NULL;
-        int *saveptr = calloc(1, sizeof *saveptr);
-        while ((curr_refpalavra = ht_iter(palavras, saveptr)) != NULL) {
+        void *saveptr = NULL;
+        while ((curr_refpalavra = ht_iter(palavras, &saveptr)) != NULL) {
             RefPalavra *refpalavra = kvp_get_value(curr_refpalavra);
             char *palavra = refpalavra_get_palavra(refpalavra);
 
@@ -79,38 +80,36 @@ HashTable *indexador_criaIdxPalavras(HashTable *idxDocumentos) {
                 int *v = malloc(sizeof *v);
                 *v = 1;
 
-                ht_add(idxFreq, palavra, v);
+                ht_insert(idxFreq, palavra, v);
                 free(v);
             } else {
                 *freq += 1;
             }
         }
-        free(saveptr);
     }
-    free(saveptr);
 
     // HashTable<string, Palavra>
     HashTable *idxPalavras =
-        ht_init((cpy_fn)strdup, (cpy_fn)palavra_cpy, (cmp_fn)strcmp,
-                (free_fn)free, (free_fn)palavra_dispose);
+        ht_init((hash_fn)hashStr, (cpy_fn)strdup, (cpy_fn)palavra_cpy,
+                (cmp_fn)strcmp, (free_fn)free, (free_fn)palavra_dispose);
 
-    saveptr = calloc(1, sizeof *saveptr);
     curr = NULL;
-    while ((curr = ht_iter(idxDocumentos, saveptr)) != NULL) {
+    saveptr = NULL;
+    while ((curr = ht_iter(idxDocumentos, &saveptr)) != NULL) {
         Documento *doc = kvp_get_value(curr);
 
         HashTable *palavras = doc_get_refPalavras(doc);
 
         // KeyValuePair<string, RefPalavra>
         KeyValuePair *curr_refpalavra = NULL;
-        int *saveptr = calloc(1, sizeof *saveptr);
-        while ((curr_refpalavra = ht_iter(palavras, saveptr)) != NULL) {
+        void *saveptr = NULL;
+        while ((curr_refpalavra = ht_iter(palavras, &saveptr)) != NULL) {
             RefPalavra *refpalavra = kvp_get_value(curr_refpalavra);
             char *palavra = refpalavra_get_palavra(refpalavra);
             int frequencia = refpalavra_get_freq(refpalavra);
 
             // calcula o tf-idf
-            int n = ht_get_qty(idxDocumentos);
+            int n = ht_get_length(idxDocumentos);
             int *df = ht_get(idxFreq, palavra);
 
             float idf_dividendo = 1 + n;
@@ -127,11 +126,11 @@ HashTable *indexador_criaIdxPalavras(HashTable *idxDocumentos) {
             Palavra *pal = ht_get(idxPalavras, palavra);
             if (pal == NULL) {
                 // HashTable<string, RefDocumento>
-                HashTable *refdocumentos =
-                    ht_init((cpy_fn)strdup, (cpy_fn)refdoc_cpy, (cmp_fn)strcmp,
-                            (free_fn)free, (free_fn)refdoc_dispose);
+                HashTable *refdocumentos = ht_init(
+                    (hash_fn)hashStr, (cpy_fn)strdup, (cpy_fn)refdoc_cpy,
+                    (cmp_fn)strcmp, (free_fn)free, (free_fn)refdoc_dispose);
 
-                ht_add(refdocumentos, documento, refdocumento);
+                ht_insert(refdocumentos, documento, refdocumento);
 
                 refdoc_dispose(refdocumento);
 
@@ -139,21 +138,19 @@ HashTable *indexador_criaIdxPalavras(HashTable *idxDocumentos) {
 
                 ht_dispose(refdocumentos);
 
-                ht_add(idxPalavras, palavra, nova_palavra);
+                ht_insert(idxPalavras, palavra, nova_palavra);
 
                 palavra_dispose(nova_palavra);
             } else {
                 // HashTable<string, RefDocumento>
                 HashTable *refdocumentos = palavra_get_refDocumentos(pal);
 
-                ht_add(refdocumentos, documento, refdocumento);
+                ht_insert(refdocumentos, documento, refdocumento);
 
                 refdoc_dispose(refdocumento);
             }
         }
-        free(saveptr);
     }
-    free(saveptr);
 
     ht_dispose(idxFreq);
 
@@ -163,8 +160,8 @@ HashTable *indexador_criaIdxPalavras(HashTable *idxDocumentos) {
 Indice *indexador_criaIndice(const char *trainPath) {
     // HashTable<string, Documento>
     HashTable *documentos =
-        ht_init((cpy_fn)strdup, (cpy_fn)doc_cpy, (cmp_fn)strcmp, (free_fn)free,
-                (free_fn)doc_dispose);
+        ht_init((hash_fn)hashStr, (cpy_fn)strdup, (cpy_fn)doc_cpy,
+                (cmp_fn)strcmp, (free_fn)free, (free_fn)doc_dispose);
 
     FILE *train = fopen(trainPath, "r");
     if (train == NULL)
@@ -188,7 +185,7 @@ Indice *indexador_criaIndice(const char *trainPath) {
 
         free(train_instruct);
 
-        ht_add(documentos, doc_get_arquivo(doc), doc);
+        ht_insert(documentos, doc_get_arquivo(doc), doc);
 
         doc_dispose(doc);
     }

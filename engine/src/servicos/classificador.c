@@ -25,7 +25,7 @@ char *classificador_classificaDocumento(Documento *documento, Indice *idx,
 
     // HashTable<string, Documento>
     HashTable *docsIdx = indice_get_documentos(idx);
-    ht_add(docsIdx, doc_get_arquivo(documento), documento);
+    ht_insert(docsIdx, doc_get_arquivo(documento), documento);
 
     // HashTable<string, Palavra>
     HashTable *idxPalavras = indexador_criaIdxPalavras(docsIdx);
@@ -34,7 +34,7 @@ char *classificador_classificaDocumento(Documento *documento, Indice *idx,
 
     // HashTable<string, float>
     HashTable *similaridadeDocumentos =
-        ht_init((cpy_fn)strdup, (cpy_fn)floatdup, (cmp_fn)strcmp, (free_fn)free,
+        ht_init((hash_fn)hashStr, (cpy_fn)strdup, (cpy_fn)floatdup, (cmp_fn)strcmp, (free_fn)free,
                 (free_fn)free);
     // Associa identificador de um documento no indice com a similaridade entre
     // ele e o ducumento a ser classificado
@@ -42,7 +42,7 @@ char *classificador_classificaDocumento(Documento *documento, Indice *idx,
     float moduloDocumento = 0;
     // KeyValuePair<string, RefPalavra>
     KeyValuePair *currPalavra = NULL;
-    int saveptr = 0;
+    void* saveptr = NULL;
     while ((currPalavra = ht_iter(doc_get_refPalavras(documento), &saveptr)) !=
            NULL) {
         char *palavra = refpalavra_get_palavra(kvp_get_value(currPalavra));
@@ -58,7 +58,7 @@ char *classificador_classificaDocumento(Documento *documento, Indice *idx,
 
     // KeyValuePair<string, Documento>
     KeyValuePair *curr = NULL;
-    saveptr = 0;
+    saveptr = NULL;
     while ((curr = ht_iter(docsIdx, &saveptr)) != NULL) {
         Documento *doc = kvp_get_value(curr);
         char *currDocNome = doc_get_arquivo(doc);
@@ -71,7 +71,7 @@ char *classificador_classificaDocumento(Documento *documento, Indice *idx,
 
         // KeyValuePair<string, RefPalavra>
         KeyValuePair *currPalavra = NULL;
-        int saveptr = 0;
+        void *saveptr = 0;
         while ((currPalavra = ht_iter(doc_get_refPalavras(doc), &saveptr)) !=
                NULL) {
             // tfIdf do documento a ser classificado
@@ -100,7 +100,7 @@ char *classificador_classificaDocumento(Documento *documento, Indice *idx,
         similaridadeDoc /= (moduloDocumento * normaDoc);
 
         // Adiciona a similaridade calculada ao hash de similaridade
-        ht_add(similaridadeDocumentos, currDocNome, &similaridadeDoc);
+        ht_insert(similaridadeDocumentos, currDocNome, &similaridadeDoc);
     }
 
     ht_dispose(idxPalavras);
@@ -114,7 +114,7 @@ char *classificador_classificaDocumento(Documento *documento, Indice *idx,
 
     // HashTable<string, int>
     HashTable *freqClasseDocumentos =
-        ht_init((cpy_fn)strdup, (cpy_fn)intdup, (cmp_fn)strcmp, (free_fn)free,
+        ht_init((hash_fn)hashStr, (cpy_fn)strdup, (cpy_fn)intdup, (cmp_fn)strcmp, (free_fn)free,
                 (free_fn)free);
     // Agrega a frequencia das classes dos k documentos mais similares
 
@@ -129,7 +129,7 @@ char *classificador_classificaDocumento(Documento *documento, Indice *idx,
             freq = malloc(sizeof(int));
             *freq = 1;
 
-            ht_add(freqClasseDocumentos, doc_get_classe(doc), freq);
+            ht_insert(freqClasseDocumentos, doc_get_classe(doc), freq);
 
             free(freq);
         } else {
