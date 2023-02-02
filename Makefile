@@ -33,13 +33,13 @@ all : pre-build build
 
 # Compila o executável e linka as bibliotecas
 nlindexa: nlindexa.c
-	$(CC) -o $@ $< -L $(LIBCOMMONDIR)/ -l$(LIBCOMMON) -L $(LIBENGINEDIR)/ -l$(LIBENGINE) $(CFLAGS)
+	$(CC) -o $@ $< -L $(LIBENGINEDIR)/ -l$(LIBENGINE) -L $(LIBCOMMONDIR)/ -l$(LIBCOMMON) $(CFLAGS)
 
 nlbusca: nlbusca.c
-	$(CC) -o $@ $< -L $(LIBCOMMONDIR)/ -l$(LIBCOMMON) -L $(LIBENGINEDIR)/ -l$(LIBENGINE) $(CFLAGS)
+	$(CC) -o $@ $< -L $(LIBENGINEDIR)/ -l$(LIBENGINE) -L $(LIBCOMMONDIR)/ -l$(LIBCOMMON) $(CFLAGS)
 
 nltesta: nltesta.c
-	$(CC) -o $@ $< -L $(LIBCOMMONDIR)/ -l$(LIBCOMMON) -L $(LIBENGINEDIR)/ -l$(LIBENGINE) $(CFLAGS)
+	$(CC) -o $@ $< -L $(LIBENGINEDIR)/ -l$(LIBENGINE) -L $(LIBCOMMONDIR)/ -l$(LIBCOMMON) $(CFLAGS)
 
 # Chama os submakefiles garantindo a compilação das bibliotecas
 pre-build:

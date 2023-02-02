@@ -5,6 +5,7 @@
 
 #include "documento.h"
 #include "exception.h"
+#include "extlib.h"
 #include "key_value_pair.h"
 #include "palavra.h"
 #include "ref_palavra.h"
@@ -54,7 +55,7 @@ Documento *indexador_criaDocumento(char *train_instruc) {
 
 HashTable *indexador_criaIdxPalavras(HashTable *idxDocumentos) {
     // KeyValuePair<string, int*>
-    HashTable *idxFreq = ht_init((cpy_fn)strdup, (cpy_fn)lib_intdup,
+    HashTable *idxFreq = ht_init((cpy_fn)strdup, (cpy_fn)intdup,
                                  (cmp_fn)strcmp, (free_fn)free, (free_fn)free);
 
     // KeyValuePair<string, Documento>
@@ -166,6 +167,8 @@ Indice *indexador_criaIndice(const char *trainPath) {
                 (free_fn)doc_dispose);
 
     FILE *train = fopen(trainPath, "r");
+    if (train == NULL)
+        exception_throw_failure("Falha ao abrir arquivo train.txt");
 
     char *traincpy = strdup(trainPath);
     char *basePath = dirname(traincpy);
@@ -180,6 +183,8 @@ Indice *indexador_criaIndice(const char *trainPath) {
         snprintf(train_instruct, pathSize, "%s/%s", basePath, buffer);
 
         Documento *doc = indexador_criaDocumento(train_instruct);
+        if (doc == NULL)
+            continue;
 
         free(train_instruct);
 

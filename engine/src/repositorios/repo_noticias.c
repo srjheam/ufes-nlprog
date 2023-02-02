@@ -14,10 +14,13 @@ Documento *reponoticias_carregaDocumento(FILE *noticia, const char *nome,
         return NULL;
     }
 
+    if (buffer[strlen(buffer) - 1] == '\n')
+        buffer[strlen(buffer) - 1] = '\0';
+
     // HashTable<string, RefPalavra>
     HashTable *refPalavras =
-        ht_init((cpy_fn)strdup, (cpy_fn)refpalavra_cpy, (cmp_fn)strcmp, (free_fn)free,
-                (free_fn)refpalavra_dispose);
+        ht_init((cpy_fn)strdup, (cpy_fn)refpalavra_cpy, (cmp_fn)strcmp,
+                (free_fn)free, (free_fn)refpalavra_dispose);
 
     char *saveptr = NULL, *token = NULL;
     int i;
@@ -31,8 +34,7 @@ Documento *reponoticias_carregaDocumento(FILE *noticia, const char *nome,
             RefPalavra *ref = refpalavra_init(token, 1);
             ht_add(refPalavras, token, ref);
             refpalavra_dispose(ref);
-        }
-        else
+        } else
             refpalavra_incrementaFreqPor(ref, 1);
     }
     free(buffer);
