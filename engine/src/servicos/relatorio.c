@@ -70,7 +70,7 @@ void relatorio_palavras(Indice *idx, char *query) {
         int *freq_ptr = ht_get(ht_classes, curr_class);
         if (freq_ptr == NULL) {
             int freq = 1;
-            ht_add(ht_classes, curr_class, &freq);
+            ht_insert(ht_classes, curr_class, &freq);
         } else
             *(freq_ptr) += 1;
     }
