@@ -105,6 +105,8 @@ void ht_insert(HashTable *ht, const void *chave, const void *value) {
                                       ht->disposeKey, ht->disposeValue);
 
         ht->items[i] = novo;
+
+        ll_append(ht->iterables, novo);
     } else
         kvp_set_value(ht->items[i], value);
 }
@@ -116,7 +118,7 @@ void *ht_get(HashTable *ht, const void *chave) {
            !ht->cmpKey(kvp_get_key(ht->items[i]), chave) == 0)
         i = (i + 1) & (ht->size - 1);
 
-    return ht->items[i];
+    return kvp_get_value(ht->items[i]);
 }
 
 size_t ht_get_length(HashTable *ht) { return ll_get_length(ht->iterables); }
