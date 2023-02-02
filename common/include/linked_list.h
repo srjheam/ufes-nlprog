@@ -9,7 +9,7 @@ LinkedList *ll_init(cpy_fn cpyValues, free_fn disposeValues);
 
 void ll_dispose(LinkedList *list);
 
-size_t ll_get_size(LinkedList *list);
+size_t ll_get_length(LinkedList *list);
 
 void ll_append(LinkedList *list, void *data);
 

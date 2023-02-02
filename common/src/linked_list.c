@@ -6,7 +6,7 @@
 
 struct tLinkedList {
     Node *head;
-    size_t size;
+    size_t length;
 
     cpy_fn cpyValues;
     free_fn disposeValues;
@@ -18,7 +18,7 @@ LinkedList *ll_init(cpy_fn cpyValues, free_fn disposeValues) {
         exception_throw_OutOfMemory("LinkedList malloc failed");
 
     list->head = NULL;
-    list->size = 0;
+    list->length = 0;
 
     list->cpyValues = cpyValues;
     list->disposeValues = disposeValues;
@@ -40,13 +40,13 @@ void ll_dispose(LinkedList *list) {
     free(list);
 }
 
-size_t ll_get_size(LinkedList *list) { return list->size; }
+size_t ll_get_length(LinkedList *list) { return list->length; }
 
 void ll_append(LinkedList *list, void *data) {
     Node *node = node_init(data, list->head);
     list->head = node;
 
-    list->size++;
+    list->length++;
 }
 
 void *ll_iter(LinkedList *list, void **saveptr) {
@@ -54,11 +54,11 @@ void *ll_iter(LinkedList *list, void **saveptr) {
         *saveptr = list->head;
         return *saveptr;
     }
-    
+
     Node *next = node_get_next(*saveptr);
     if (next == NULL)
         return NULL;
-    
+
     *saveptr = next;
 
     return *saveptr;
