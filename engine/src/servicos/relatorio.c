@@ -37,7 +37,7 @@ void relatorio_palavras(Indice *idx, char *query) {
     HashTable *refs_docs = palavra_get_refDocumentos(palavra);
 
     // numero total de documentos
-    printf("Quantidade de documentos em que a palavra está presente: %d\n\n",
+    printf("Quantidade de documentos em que a palavra está presente: %lu\n\n",
            ht_get_length(refs_docs));
 
     // os 10 em que ela mais aparece
@@ -98,7 +98,7 @@ void relatorio_documentos(Indice *idx) {
 
     printf("Os 10 documentos mais longos:\n");
     for (int i = 0; i < 10 && i < lista_get_quantidade(docs); i++) {
-        printf("%d. Titulo: %s - Palavras: %d - Classe: %s\n", i,
+        printf("%d. Titulo: %s - Palavras: %lu - Classe: %s\n", i,
                doc_get_arquivo(kvp_get_value(lista_get_elemento(docs, i))),
                ht_get_length(doc_get_refPalavras(
                    kvp_get_value(lista_get_elemento(docs, i)))),
@@ -110,7 +110,7 @@ void relatorio_documentos(Indice *idx) {
 
     int n = lista_get_quantidade(docs);
     for (int i = n - 1; (n - i + 1) < 10 && i >= 0; i--) {
-        printf("%d. Titulo: %s - Palavras: %d - Classe: %s\n", i,
+        printf("%d. Titulo: %s - Palavras: %lu - Classe: %s\n", i,
                doc_get_arquivo(kvp_get_value(lista_get_elemento(docs, i))),
                ht_get_length(doc_get_refPalavras(
                    kvp_get_value(lista_get_elemento(docs, i)))),
