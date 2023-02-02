@@ -61,8 +61,8 @@ HashTable *indexador_criaIdxPalavras(HashTable *idxDocumentos) {
 
     // KeyValuePair<string, Documento>
     KeyValuePair *curr = NULL;
-    int *saveptr = calloc(1, sizeof *saveptr);
-    while ((curr = ht_iter(idxDocumentos, saveptr)) != NULL) {
+    void *saveptr = NULL;
+    while ((curr = ht_iter(idxDocumentos, &saveptr)) != NULL) {
         Documento *doc = kvp_get_value(curr);
 
         // HashTable<string, RefPalavra>
@@ -70,8 +70,8 @@ HashTable *indexador_criaIdxPalavras(HashTable *idxDocumentos) {
 
         // KeyValuePair<string, RefPalavra>
         KeyValuePair *curr_refpalavra = NULL;
-        int *saveptr = calloc(1, sizeof *saveptr);
-        while ((curr_refpalavra = ht_iter(palavras, saveptr)) != NULL) {
+        void *saveptr = NULL;
+        while ((curr_refpalavra = ht_iter(palavras, &saveptr)) != NULL) {
             RefPalavra *refpalavra = kvp_get_value(curr_refpalavra);
             char *palavra = refpalavra_get_palavra(refpalavra);
 
@@ -86,26 +86,24 @@ HashTable *indexador_criaIdxPalavras(HashTable *idxDocumentos) {
                 *freq += 1;
             }
         }
-        free(saveptr);
     }
-    free(saveptr);
 
     // HashTable<string, Palavra>
     HashTable *idxPalavras =
         ht_init((hash_fn)hashStr, (cpy_fn)strdup, (cpy_fn)palavra_cpy,
                 (cmp_fn)strcmp, (free_fn)free, (free_fn)palavra_dispose);
 
-    saveptr = calloc(1, sizeof *saveptr);
     curr = NULL;
-    while ((curr = ht_iter(idxDocumentos, saveptr)) != NULL) {
+    saveptr = NULL;
+    while ((curr = ht_iter(idxDocumentos, &saveptr)) != NULL) {
         Documento *doc = kvp_get_value(curr);
 
         HashTable *palavras = doc_get_refPalavras(doc);
 
         // KeyValuePair<string, RefPalavra>
         KeyValuePair *curr_refpalavra = NULL;
-        int *saveptr = calloc(1, sizeof *saveptr);
-        while ((curr_refpalavra = ht_iter(palavras, saveptr)) != NULL) {
+        void *saveptr = NULL;
+        while ((curr_refpalavra = ht_iter(palavras, &saveptr)) != NULL) {
             RefPalavra *refpalavra = kvp_get_value(curr_refpalavra);
             char *palavra = refpalavra_get_palavra(refpalavra);
             int frequencia = refpalavra_get_freq(refpalavra);
@@ -152,9 +150,7 @@ HashTable *indexador_criaIdxPalavras(HashTable *idxDocumentos) {
                 refdoc_dispose(refdocumento);
             }
         }
-        free(saveptr);
     }
-    free(saveptr);
 
     ht_dispose(idxFreq);
 

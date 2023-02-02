@@ -42,7 +42,7 @@ char *classificador_classificaDocumento(Documento *documento, Indice *idx,
     float moduloDocumento = 0;
     // KeyValuePair<string, RefPalavra>
     KeyValuePair *currPalavra = NULL;
-    int saveptr = 0;
+    void* saveptr = NULL;
     while ((currPalavra = ht_iter(doc_get_refPalavras(documento), &saveptr)) !=
            NULL) {
         char *palavra = refpalavra_get_palavra(kvp_get_value(currPalavra));
@@ -58,7 +58,7 @@ char *classificador_classificaDocumento(Documento *documento, Indice *idx,
 
     // KeyValuePair<string, Documento>
     KeyValuePair *curr = NULL;
-    saveptr = 0;
+    saveptr = NULL;
     while ((curr = ht_iter(docsIdx, &saveptr)) != NULL) {
         Documento *doc = kvp_get_value(curr);
         char *currDocNome = doc_get_arquivo(doc);
@@ -71,7 +71,7 @@ char *classificador_classificaDocumento(Documento *documento, Indice *idx,
 
         // KeyValuePair<string, RefPalavra>
         KeyValuePair *currPalavra = NULL;
-        int saveptr = 0;
+        void *saveptr = 0;
         while ((currPalavra = ht_iter(doc_get_refPalavras(doc), &saveptr)) !=
                NULL) {
             // tfIdf do documento a ser classificado

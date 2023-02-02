@@ -23,8 +23,8 @@ static void repoidx_salvaIndiceDocumentos(HashTable *idxDocumentos,
 
     // KVP<string, Documento>
     KeyValuePair *curr = NULL;
-    int *saveptr = calloc(1, sizeof *saveptr);
-    while ((curr = ht_iter(idxDocumentos, saveptr)) != NULL) {
+    void *saveptr = NULL;
+    while ((curr = ht_iter(idxDocumentos, &saveptr)) != NULL) {
         Documento *doc = kvp_get_value(curr);
 
         // Salva nome de um documento com final '\0'
@@ -60,8 +60,8 @@ static void repoidx_salvaIndiceDocumentos(HashTable *idxDocumentos,
 
         // KVP<string, RefPalavra>
         KeyValuePair *curr = NULL;
-        int *saveptr = calloc(1, sizeof *saveptr);
-        while ((curr = ht_iter(refPalavra, saveptr)) != NULL) {
+        void *saveptr = NULL;
+        while ((curr = ht_iter(refPalavra, &saveptr)) != NULL) {
             RefPalavra *ref = kvp_get_value(curr);
 
             // Salva palavra com final '\0'
@@ -83,9 +83,7 @@ static void repoidx_salvaIndiceDocumentos(HashTable *idxDocumentos,
                     "repo_indices.repoidx_salvaIndiceDocumentos");
             }
         }
-        free(saveptr);
     }
-    free(saveptr);
 }
 
 static void repoidx_salvaIndicePalavras(HashTable *idxPalavras, FILE *fbin) {
@@ -99,8 +97,8 @@ static void repoidx_salvaIndicePalavras(HashTable *idxPalavras, FILE *fbin) {
 
     // KVP<string, Palavra>
     KeyValuePair *curr = NULL;
-    int *saveptr = calloc(1, sizeof *saveptr);
-    while ((curr = ht_iter(idxPalavras, saveptr)) != NULL) {
+    void *saveptr = NULL;
+    while ((curr = ht_iter(idxPalavras, &saveptr)) != NULL) {
         Palavra *pal = kvp_get_value(curr);
 
         // Salva palavra com final '\0'
@@ -124,8 +122,8 @@ static void repoidx_salvaIndicePalavras(HashTable *idxPalavras, FILE *fbin) {
 
         // KVP<string, RefPalavra>
         KeyValuePair *curr = NULL;
-        int *saveptr = calloc(1, sizeof *saveptr);
-        while ((curr = ht_iter(refDocumento, saveptr)) != NULL) {
+        void *saveptr = NULL;
+        while ((curr = ht_iter(refDocumento, &saveptr)) != NULL) {
             RefDocumento *ref = kvp_get_value(curr);
 
             // Salva nome refdocumento com final '\0'
@@ -155,9 +153,7 @@ static void repoidx_salvaIndicePalavras(HashTable *idxPalavras, FILE *fbin) {
                     "repo_indices.repoidx_salvaIndicePalavras");
             }
         }
-        free(saveptr);
     }
-    free(saveptr);
 }
 
 static HashTable *repoidx_carregaIndiceDocumentos(FILE *fbin) {

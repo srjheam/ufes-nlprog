@@ -32,9 +32,9 @@ Lista *BuscaNoticias(char *query, Indice *idx) {
         HashTable *refs_doc =
             palavra_get_refDocumentos(ht_get(indice_get_palavras(idx), token));
 
-        int *saveptr = calloc(1, sizeof *saveptr);
         KeyValuePair *curr_refdoc = NULL;
-        while ((curr_refdoc = ht_iter(refs_doc, saveptr)) != NULL) {
+        void *saveptr = NULL;
+        while ((curr_refdoc = ht_iter(refs_doc, &saveptr)) != NULL) {
             RefDocumento *refdoc = kvp_get_value(curr_refdoc);
             char *titulo = refdoc_get_documento(refdoc);
 
@@ -44,7 +44,6 @@ Lista *BuscaNoticias(char *query, Indice *idx) {
             float *tfidf_ptr = ht_get(documentos, titulo);
             *tfidf_ptr += refdoc_get_tdIdf(refdoc);
         }
-        free(saveptr);
     }
 
     Lista *lista_noticias = ht_to_list(documentos);
