@@ -13,6 +13,10 @@
 
 #include "buscador.h"
 
+static int cmp_tfidf_listanoticias(const KeyValuePair *x, const KeyValuePair *y){
+    return *(float *)kvp_get_value(y) - *(float *)kvp_get_value(x);;
+}
+
 Lista *BuscaNoticias(char *query, Indice *idx) {
     if (query[strlen(query) - 1] == '\n')
         query[strlen(query) - 1] = '\0';
@@ -48,6 +52,8 @@ Lista *BuscaNoticias(char *query, Indice *idx) {
     }
 
     Lista *lista_noticias = ht_to_list(documentos);
+
+    lista_ordena(lista_noticias, *cmp_tfidf_listanoticias);
 
     return lista_noticias;
 }
