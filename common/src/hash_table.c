@@ -118,6 +118,9 @@ void *ht_get(HashTable *ht, const void *chave) {
            !ht->cmpKey(kvp_get_key(ht->items[i]), chave) == 0)
         i = (i + 1) & (ht->size - 1);
 
+    if (ht->items[i] == NULL)
+        return NULL;
+
     return kvp_get_value(ht->items[i]);
 }
 
@@ -140,7 +143,7 @@ HashTable *ht_cpy(const HashTable *ht) {
 
     cpy->size = ht->size;
 
-    cpy->iterables = ll_cpy(ht->iterables);
+    cpy->iterables = ll_init((cpy_fn)kvp_cpy, (free_fn)kvp_dispose);
 
     cpy->items = calloc(ht->size, sizeof *ht->items);
     if (!cpy->items)
@@ -154,7 +157,10 @@ HashTable *ht_cpy(const HashTable *ht) {
         while (cpy->items[i] != NULL)
             i = (i + 1) & (cpy->size - 1);
 
-        cpy->items[i] = kvp_cpy(kvp);
+        KeyValuePair *kvpCpy = kvp_cpy(kvp);
+
+        cpy->items[i] = kvpCpy;
+        ll_append(cpy->iterables, kvpCpy);
     }
 
     return cpy;
