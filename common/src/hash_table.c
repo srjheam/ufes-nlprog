@@ -69,8 +69,8 @@ static size_t ht_hash(const HashTable *ht, const void *chave) {
 
 static void ht_grow(HashTable *ht) {
     if (ht_get_length(ht) >= 13 * (ht->size >> 4)) {
-        size_t nsize = ht->size * HT_GROWTH_FACTOR;
-        KeyValuePair **nitems = calloc(nsize, sizeof *ht->items);
+        ht->size *= HT_GROWTH_FACTOR;
+        KeyValuePair **nitems = calloc(ht->size, sizeof *ht->items);
         if (!nitems)
             exception_throw_OutOfMemory("HashTable grow failed");
 
@@ -80,14 +80,13 @@ static void ht_grow(HashTable *ht) {
             size_t i = ht_hash(ht, kvp_get_key(kvp));
 
             while (nitems[i] != NULL)
-                i = (i + 1) & (nsize - 1);
+                i = (i + 1) & (ht->size - 1);
 
             nitems[i] = kvp;
         }
 
         free(ht->items);
         ht->items = nitems;
-        ht->size = nsize;
     }
 }
 
