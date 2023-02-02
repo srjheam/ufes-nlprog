@@ -13,14 +13,12 @@
 
 #include "buscador.h"
 
-static int cmp_tfidf_listanoticias(const KeyValuePair *x, const KeyValuePair *y){
-    return *(float *)kvp_get_value(y) - *(float *)kvp_get_value(x);
+static int cmp_tfidf_listanoticias(const KeyValuePair *x,
+                                   const KeyValuePair *y) {
+    return *(float *)kvp_get_value(y) * 1e6 - *(float *)kvp_get_value(x) * 1e6;
 }
 
-Lista *BuscaNoticias(char *query, Indice *idx) {
-    if (query[strlen(query) - 1] == '\n')
-        query[strlen(query) - 1] = '\0';
-
+Lista *buscador_buscaNoticias(char *query, Indice *idx) {
     // HashTable <string, float>
     HashTable *documentos =
         ht_init((cpy_fn)strdup, (cpy_fn)intdup, (cmp_fn)strcmp, (free_fn)free,
