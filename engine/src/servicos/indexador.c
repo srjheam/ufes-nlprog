@@ -79,7 +79,7 @@ HashTable *indexador_criaIdxPalavras(HashTable *idxDocumentos) {
                 int *v = malloc(sizeof *v);
                 *v = 1;
 
-                ht_add(idxFreq, palavra, v);
+                ht_insert(idxFreq, palavra, v);
                 free(v);
             } else {
                 *freq += 1;
@@ -131,7 +131,7 @@ HashTable *indexador_criaIdxPalavras(HashTable *idxDocumentos) {
                     ht_init((cpy_fn)strdup, (cpy_fn)refdoc_cpy, (cmp_fn)strcmp,
                             (free_fn)free, (free_fn)refdoc_dispose);
 
-                ht_add(refdocumentos, documento, refdocumento);
+                ht_insert(refdocumentos, documento, refdocumento);
 
                 refdoc_dispose(refdocumento);
 
@@ -139,14 +139,14 @@ HashTable *indexador_criaIdxPalavras(HashTable *idxDocumentos) {
 
                 ht_dispose(refdocumentos);
 
-                ht_add(idxPalavras, palavra, nova_palavra);
+                ht_insert(idxPalavras, palavra, nova_palavra);
 
                 palavra_dispose(nova_palavra);
             } else {
                 // HashTable<string, RefDocumento>
                 HashTable *refdocumentos = palavra_get_refDocumentos(pal);
 
-                ht_add(refdocumentos, documento, refdocumento);
+                ht_insert(refdocumentos, documento, refdocumento);
 
                 refdoc_dispose(refdocumento);
             }
@@ -188,7 +188,7 @@ Indice *indexador_criaIndice(const char *trainPath) {
 
         free(train_instruct);
 
-        ht_add(documentos, doc_get_arquivo(doc), doc);
+        ht_insert(documentos, doc_get_arquivo(doc), doc);
 
         doc_dispose(doc);
     }

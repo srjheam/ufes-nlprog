@@ -39,7 +39,7 @@ Lista *BuscaNoticias(char *query, Indice *idx) {
             char *titulo = refdoc_get_documento(refdoc);
 
             if (ht_get(documentos, titulo) == NULL)
-                ht_add(documentos, titulo, 0);
+                ht_insert(documentos, titulo, 0);
 
             float *tfidf_ptr = ht_get(documentos, titulo);
             *tfidf_ptr += refdoc_get_tdIdf(refdoc);

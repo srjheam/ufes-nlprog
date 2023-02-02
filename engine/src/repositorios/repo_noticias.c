@@ -32,7 +32,7 @@ Documento *reponoticias_carregaDocumento(FILE *noticia, const char *nome,
         RefPalavra *ref = ht_get(refPalavras, token);
         if (ref == NULL) {
             RefPalavra *ref = refpalavra_init(token, 1);
-            ht_add(refPalavras, token, ref);
+            ht_insert(refPalavras, token, ref);
             refpalavra_dispose(ref);
         } else
             refpalavra_incrementaFreqPor(ref, 1);

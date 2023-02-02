@@ -91,7 +91,7 @@ static void ht_grow(HashTable *ht) {
     }
 }
 
-void ht_add(HashTable *ht, const void *chave, const void *value) {
+void ht_insert(HashTable *ht, const void *chave, const void *value) {
     ht_grow(ht);
 
     size_t i = ht_hash(ht, chave);

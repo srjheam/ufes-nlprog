@@ -227,7 +227,7 @@ static HashTable *repoidx_carregaIndiceDocumentos(FILE *fbin) {
 
             RefPalavra *ref = refpalavra_init(palavra, freq);
 
-            ht_add(refPalavras, palavra, ref);
+            ht_insert(refPalavras, palavra, ref);
 
             free(palavra);
             refpalavra_dispose(ref);
@@ -238,7 +238,7 @@ static HashTable *repoidx_carregaIndiceDocumentos(FILE *fbin) {
         free(classe);
         ht_dispose(refPalavras);
 
-        ht_add(idxDocumentos, nome, doc);
+        ht_insert(idxDocumentos, nome, doc);
 
         free(nome);
         doc_dispose(doc);
@@ -315,7 +315,7 @@ static HashTable *repoidx_carregaIndicePalavras(FILE *fbin) {
 
             RefDocumento *ref = refdoc_init(documento, freq, tfIdf);
 
-            ht_add(refDocumentos, documento, ref);
+            ht_insert(refDocumentos, documento, ref);
 
             free(documento);
             refdoc_dispose(ref);
@@ -325,7 +325,7 @@ static HashTable *repoidx_carregaIndicePalavras(FILE *fbin) {
 
         ht_dispose(refDocumentos);
 
-        ht_add(idxPalavras, palavra, pal);
+        ht_insert(idxPalavras, palavra, pal);
 
         free(palavra);
         palavra_dispose(pal);

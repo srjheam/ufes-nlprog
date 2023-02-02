@@ -50,7 +50,7 @@ void ht_dispose(HashTable *ht);
  * @param chave A chave nessa @p ht
  * @param value Valor nessa chave
  */
-void ht_add(HashTable *ht, const void *chave, const void *value);
+void ht_insert(HashTable *ht, const void *chave, const void *value);
 
 void *ht_get(HashTable *ht, const void *chave);
 
