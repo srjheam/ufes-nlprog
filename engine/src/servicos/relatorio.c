@@ -14,16 +14,16 @@
 #include "relatorio.h"
 
 static int cmp_qtd_documentos(KeyValuePair *x, KeyValuePair *y){
-    return *(int *)refdoc_get_freq(kvp_get_value(y)) - *(int *)refdoc_get_freq(kvp_get_value(x));
+    return refdoc_get_freq(kvp_get_value(y)) - refdoc_get_freq(kvp_get_value(x));
 }
 
 static int cmp_qtd_classes(KeyValuePair *x, KeyValuePair *y){
-    return *(int *)kvp_get_value(y) - *(int *)kvp_get_value(x);
+    return (int *)kvp_get_value(y) - (int *)kvp_get_value(x);
 }
 
 static int cmp_len_doc(KeyValuePair *x, KeyValuePair *y){
-    return *(int *)ht_get_qty(doc_get_refPalavras(kvp_get_value(y))) 
-         - *(int *)ht_get_qty(doc_get_refPalavras(kvp_get_value(x)));
+    return ht_get_qty(doc_get_refPalavras(kvp_get_value(y))) 
+         - ht_get_qty(doc_get_refPalavras(kvp_get_value(x)));
 }
 
 void relatorio_palavras(Indice *idx, char *query){
@@ -62,7 +62,7 @@ void relatorio_palavras(Indice *idx, char *query){
         ht_add(ht_classes, curr_class, 0);
 
         int *freq_ptr = ht_get(ht_classes, curr_class);
-        *(freq_ptr)++;
+        *(freq_ptr)+= 1;
     }
     free(saveptr);
 
@@ -73,7 +73,7 @@ void relatorio_palavras(Indice *idx, char *query){
     for(int i = 0; i < lista_get_quantidade(lista_classes); i++){
         printf("Classe: %s - Frequência: %d\n",
                             (char *)kvp_get_key(lista_get_elemento(lista_classes, i)),
-                            (int)kvp_get_value(lista_get_elemento(lista_classes, i)));
+                            *(int *)kvp_get_value(lista_get_elemento(lista_classes, i)));
     }
 
 }
