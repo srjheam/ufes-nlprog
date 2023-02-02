@@ -143,8 +143,10 @@ HashTable *ht_cpy(const HashTable *ht) {
 
     cpy->size = ht->size;
 
+    ll_dispose(cpy->iterables);
     cpy->iterables = ll_init((cpy_fn)kvp_cpy, (free_fn)kvp_dispose);
 
+    free(cpy->items);
     cpy->items = calloc(ht->size, sizeof *ht->items);
     if (!cpy->items)
         exception_throw_OutOfMemory("HashTable copy failed");
