@@ -13,58 +13,64 @@
 
 #include "relatorio.h"
 
-static int cmp_qtd_documentos(KeyValuePair *x, KeyValuePair *y){
-    return refdoc_get_freq(kvp_get_value(y)) - refdoc_get_freq(kvp_get_value(x));
+static int cmp_qtd_documentos(KeyValuePair *x, KeyValuePair *y) {
+    return refdoc_get_freq(kvp_get_value(y)) -
+           refdoc_get_freq(kvp_get_value(x));
 }
 
-static int cmp_qtd_classes(KeyValuePair *x, KeyValuePair *y){
+static int cmp_qtd_classes(KeyValuePair *x, KeyValuePair *y) {
     return *(int *)kvp_get_value(y) - *(int *)kvp_get_value(x);
 }
 
-static int cmp_len_doc(KeyValuePair *x, KeyValuePair *y){
-    return ht_get_qty(doc_get_refPalavras(kvp_get_value(y))) 
-         - ht_get_qty(doc_get_refPalavras(kvp_get_value(x)));
+static int cmp_len_doc(KeyValuePair *x, KeyValuePair *y) {
+    return ht_get_qty(doc_get_refPalavras(kvp_get_value(y))) -
+           ht_get_qty(doc_get_refPalavras(kvp_get_value(x)));
 }
 
-void relatorio_palavras(Indice *idx, char *query){
-    //conferir se a palavra existe
+void relatorio_palavras(Indice *idx, char *query) {
+    // conferir se a palavra existe
     Palavra *palavra = NULL;
-    if((palavra = ht_get(indice_get_palavras(idx), query)) == NULL){
+    if ((palavra = ht_get(indice_get_palavras(idx), query)) == NULL) {
         printf("Palavra inválida ou não presente em nenhum documento.\n");
         return;
     }
     HashTable *refs_docs = palavra_get_refDocumentos(palavra);
 
-    //numero total de documentos
+    // numero total de documentos
     printf("Quantidade de documentos em que a palavra está presente: %d\n\n",
-            ht_get_qty(refs_docs));
-    
-    //os 10 em que ela mais aparece
+           ht_get_qty(refs_docs));
+
+    // os 10 em que ela mais aparece
     Lista *refdocs = ht_to_list(refs_docs);
     lista_ordena(refdocs, (cmp_fn)cmp_qtd_documentos);
 
     printf("10 documentos em que a palavra mais aparece:\n");
-    for(int i=0;i<10 && i < lista_get_quantidade(refdocs);i++){
-        printf("%d. %s %d\n", i, refdoc_get_documento(kvp_get_value(lista_get_elemento(refdocs, i))), refdoc_get_freq(kvp_get_value(lista_get_elemento(refdocs, i))));
+    for (int i = 0; i < 10 && i < lista_get_quantidade(refdocs); i++) {
+        printf(
+            "%d. %s %d\n", i,
+            refdoc_get_documento(kvp_get_value(lista_get_elemento(refdocs, i))),
+            refdoc_get_freq(kvp_get_value(lista_get_elemento(refdocs, i))));
     }
     printf("\n");
 
-    //frequencia da palavra por classe
-    // Hashtable <string, int>
-    HashTable *ht_classes = ht_init((cpy_fn)strdup, (cpy_fn)intdup, (cmp_fn)strcmp, (free_fn)free, (free_fn)free);
+    // frequencia da palavra por classe
+    //  Hashtable <string, int>
+    HashTable *ht_classes =
+        ht_init((cpy_fn)strdup, (cpy_fn)intdup, (cmp_fn)strcmp, (free_fn)free,
+                (free_fn)free);
     int *saveptr = calloc(1, sizeof *saveptr);
     KeyValuePair *curr_refdoc = NULL;
     while ((curr_refdoc = ht_iter(refs_docs, saveptr)) != NULL) {
         char *doc_nome = refdoc_get_documento(kvp_get_value(curr_refdoc));
-        char *curr_class = doc_get_classe(ht_get(indice_get_documentos(idx), doc_nome));
-        
+        char *curr_class =
+            doc_get_classe(ht_get(indice_get_documentos(idx), doc_nome));
+
         int *freq_ptr = ht_get(ht_classes, curr_class);
-        if(freq_ptr == NULL) {
+        if (freq_ptr == NULL) {
             int freq = 1;
             ht_add(ht_classes, curr_class, &freq);
-        }
-        else
-            *(freq_ptr)+= 1;
+        } else
+            *(freq_ptr) += 1;
     }
     free(saveptr);
 
@@ -72,33 +78,34 @@ void relatorio_palavras(Indice *idx, char *query){
     lista_ordena(lista_classes, (cmp_fn)cmp_qtd_classes);
 
     printf("Frequência por classe:\n");
-    for(int i = 0; i < lista_get_quantidade(lista_classes); i++){
+    for (int i = 0; i < lista_get_quantidade(lista_classes); i++) {
         const char *classe = kvp_get_key(lista_get_elemento(lista_classes, i));
         int freq = *(int *)kvp_get_value(lista_get_elemento(lista_classes, i));
 
         printf("Classe: %s - Frequência: %d\n", classe, freq);
     }
-
 }
 
-void relatorio_documentos(Indice *idx){
+void relatorio_documentos(Indice *idx) {
     Lista *docs = ht_to_list(indice_get_documentos(idx));
     lista_ordena(docs, (cmp_fn)cmp_len_doc);
 
     printf("Documentos mais longos:\n");
-    for(int i=0; i<lista_get_quantidade(docs); i++){
-        printf("%d. Titulo: %s - Palavras: %d - Classe: %s", i
-                                                       , doc_get_arquivo(kvp_get_value(lista_get_elemento(docs, i)))
-                                                       , ht_get_qty(doc_get_refPalavras(kvp_get_value(lista_get_elemento(docs, i))))
-                                                       , doc_get_classe(kvp_get_value(lista_get_elemento(docs, i))));
+    for (int i = 0; i < lista_get_quantidade(docs); i++) {
+        printf("%d. Titulo: %s - Palavras: %d - Classe: %s", i,
+               doc_get_arquivo(kvp_get_value(lista_get_elemento(docs, i))),
+               ht_get_qty(doc_get_refPalavras(
+                   kvp_get_value(lista_get_elemento(docs, i)))),
+               doc_get_classe(kvp_get_value(lista_get_elemento(docs, i))));
     }
     printf("\n");
 
     printf("Documentos mais curtos:\n");
-    for(int i=lista_get_quantidade(docs); i>=0; i--){
-        printf("%d. Titulo: %s - Palavras: %d - Classe: %s", i
-                                                       , doc_get_arquivo(kvp_get_value(lista_get_elemento(docs, i)))
-                                                       , ht_get_qty(doc_get_refPalavras(kvp_get_value(lista_get_elemento(docs, i))))
-                                                       , doc_get_classe(kvp_get_value(lista_get_elemento(docs, i))));
+    for (int i = lista_get_quantidade(docs); i >= 0; i--) {
+        printf("%d. Titulo: %s - Palavras: %d - Classe: %s", i,
+               doc_get_arquivo(kvp_get_value(lista_get_elemento(docs, i))),
+               ht_get_qty(doc_get_refPalavras(
+                   kvp_get_value(lista_get_elemento(docs, i)))),
+               doc_get_classe(kvp_get_value(lista_get_elemento(docs, i))));
     }
 }
