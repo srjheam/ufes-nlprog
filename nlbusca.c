@@ -47,12 +47,19 @@ int main(int argc, char const *argv[]) {
 
         Lista *relevantes = buscador_buscaNoticias(query, idx);
 
-        printf("\n\nAs 10 notícias mais relevantes:\n");
-        for (int i = 0; i < 10 && i < lista_get_quantidade(relevantes); i++) {
-            KeyValuePair *kvp = lista_get_elemento(relevantes, i);
-            printf("%d. %s (%.2f)\n", i, (char *)kvp_get_key(kvp), *(float *)kvp_get_value(kvp));
+        int n = lista_get_quantidade(relevantes);
+        if (n == 0) {
+            printf("Nenhuma notícia encontrada.\n");
+        } else {
+            printf("\n\nAs 10 notícias mais relevantes:\n");
+            for (int i = 0; i < 10 && i < n; i++) {
+                KeyValuePair *kvp = lista_get_elemento(relevantes, i);
+                printf("%d. %s (%.2f)\n", i, (char *)kvp_get_key(kvp),
+                       *(float *)kvp_get_value(kvp));
+            }
         }
 
+        free(query);
         lista_dispose(relevantes);
 
         break;
