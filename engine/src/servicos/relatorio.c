@@ -58,9 +58,10 @@ void relatorio_palavras(Indice *idx, char *query) {
     // frequencia da palavra por classe
     //  Hashtable <string, int>
     HashTable *ht_classes =
-        ht_init((cpy_fn)strdup, (cpy_fn)intdup, (cmp_fn)strcmp, (free_fn)free,
-                (free_fn)free);
-    void *saveptr;
+        ht_init((hash_fn)hashStr, (cpy_fn)strdup, (cpy_fn)intdup,
+                (cmp_fn)strcmp, (free_fn)free, (free_fn)free);
+                
+    void *saveptr = NULL;
     KeyValuePair *curr_refdoc = NULL;
     while ((curr_refdoc = ht_iter(refs_docs, &saveptr)) != NULL) {
         char *doc_nome = refdoc_get_documento(kvp_get_value(curr_refdoc));
