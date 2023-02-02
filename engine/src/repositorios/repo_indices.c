@@ -13,7 +13,7 @@
 static void repoidx_salvaIndiceDocumentos(HashTable *idxDocumentos,
                                           FILE *fbin) {
     // Salva a quantidade de documentos
-    int idxDocumentosQty = ht_get_qty(idxDocumentos);
+    int idxDocumentosQty = ht_get_length(idxDocumentos);
     if (fwrite(&idxDocumentosQty, sizeof idxDocumentosQty, 1, fbin) != 1) {
         exception_throw_failure(
             "Erro ao salvar idxDocumentosQty do indice no bin - em "
@@ -49,7 +49,7 @@ static void repoidx_salvaIndiceDocumentos(HashTable *idxDocumentos,
         HashTable *refPalavra = doc_get_refPalavras(doc);
 
         // Salva a quantidade de RefPalavra
-        int refPalavraQty = ht_get_qty(refPalavra);
+        int refPalavraQty = ht_get_length(refPalavra);
         if (fwrite(&refPalavraQty, sizeof refPalavraQty, 1, fbin) != 1) {
             exception_throw_failure(
                 "Erro ao salvar refPalavraQty do indice no bin - em "
@@ -89,7 +89,7 @@ static void repoidx_salvaIndiceDocumentos(HashTable *idxDocumentos,
 
 static void repoidx_salvaIndicePalavras(HashTable *idxPalavras, FILE *fbin) {
     // Salva a quantidade de palavras
-    int idxPalavrasQty = ht_get_qty(idxPalavras);
+    int idxPalavrasQty = ht_get_length(idxPalavras);
     if (fwrite(&idxPalavrasQty, sizeof idxPalavrasQty, 1, fbin) != 1) {
         exception_throw_failure(
             "Erro ao salvar idxPalavrasQty do indice no bin - em "
@@ -114,7 +114,7 @@ static void repoidx_salvaIndicePalavras(HashTable *idxPalavras, FILE *fbin) {
         HashTable *refDocumento = palavra_get_refDocumentos(pal);
 
         // Salva a quantidade de RefPalavra
-        int refDocumentoQty = ht_get_qty(refDocumento);
+        int refDocumentoQty = ht_get_length(refDocumento);
         if (fwrite(&refDocumentoQty, sizeof refDocumentoQty, 1, fbin) != 1) {
             exception_throw_failure(
                 "Erro ao salvar refDocumentoQty do indice no bin - em "

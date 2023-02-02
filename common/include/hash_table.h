@@ -54,7 +54,7 @@ void ht_add(HashTable *ht, const void *chave, const void *value);
 
 void *ht_get(HashTable *ht, const void *chave);
 
-size_t ht_get_qty(HashTable *ht);
+size_t ht_get_length(HashTable *ht);
 
 /**
  * @brief Adquire todos os pares chave valor dessa @p ht

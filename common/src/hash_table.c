@@ -68,7 +68,7 @@ static size_t ht_hash(const HashTable *ht, const void *chave) {
 }
 
 static void ht_grow(HashTable *ht) {
-    if (ht_get_qty(ht) >= 13 * (ht->size >> 4)) {
+    if (ht_get_length(ht) >= 13 * (ht->size >> 4)) {
         size_t nsize = ht->size * HT_GROWTH_FACTOR;
         KeyValuePair **nitems = calloc(nsize, sizeof *ht->items);
         if (!nitems)
@@ -119,7 +119,7 @@ void *ht_get(HashTable *ht, const void *chave) {
     return ht->items[i];
 }
 
-size_t ht_get_qty(HashTable *ht) { return ll_get_length(ht->iterables); }
+size_t ht_get_length(HashTable *ht) { return ll_get_length(ht->iterables); }
 
 Lista *ht_to_list(HashTable *ht) {
     Lista *lista = lista_init((cpy_fn)kvp_cpy, (free_fn)kvp_dispose);

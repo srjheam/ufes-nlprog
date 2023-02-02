@@ -110,7 +110,7 @@ HashTable *indexador_criaIdxPalavras(HashTable *idxDocumentos) {
             int frequencia = refpalavra_get_freq(refpalavra);
 
             // calcula o tf-idf
-            int n = ht_get_qty(idxDocumentos);
+            int n = ht_get_length(idxDocumentos);
             int *df = ht_get(idxFreq, palavra);
 
             float idf_dividendo = 1 + n;
