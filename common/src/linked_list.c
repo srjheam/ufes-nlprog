@@ -53,7 +53,7 @@ void ll_append(LinkedList *list, void *data) {
 void *ll_iter(LinkedList *list, void **saveptr) {
     if (*saveptr == NULL) {
         *saveptr = list->head;
-        return *saveptr;
+        return node_get_data(*saveptr);
     }
 
     Node *next = node_get_next(*saveptr);
@@ -62,7 +62,7 @@ void *ll_iter(LinkedList *list, void **saveptr) {
 
     *saveptr = next;
 
-    return *saveptr;
+    return node_get_data(*saveptr);
 }
 
 LinkedList *ll_cpy(const LinkedList *list) {
@@ -71,9 +71,9 @@ LinkedList *ll_cpy(const LinkedList *list) {
         exception_throw_OutOfMemory("LinkedList cpy failed");
 
     void *saveptr = NULL;
-    Node *node = NULL;
-    while ((node = ll_iter((LinkedList *)list, &saveptr)) != NULL)
-        ll_append(cpy, list->cpyValue(node_get_data(node)));
+    void *data = NULL;
+    while ((data = ll_iter((LinkedList *)list, &saveptr)) != NULL)
+        ll_append(cpy, list->cpyValue(data));
 
     return cpy;
 }
