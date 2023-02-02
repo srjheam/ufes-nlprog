@@ -60,9 +60,9 @@ void relatorio_palavras(Indice *idx, char *query) {
     HashTable *ht_classes =
         ht_init((cpy_fn)strdup, (cpy_fn)intdup, (cmp_fn)strcmp, (free_fn)free,
                 (free_fn)free);
-    int *saveptr = calloc(1, sizeof *saveptr);
+    void *saveptr;
     KeyValuePair *curr_refdoc = NULL;
-    while ((curr_refdoc = ht_iter(refs_docs, saveptr)) != NULL) {
+    while ((curr_refdoc = ht_iter(refs_docs, &saveptr)) != NULL) {
         char *doc_nome = refdoc_get_documento(kvp_get_value(curr_refdoc));
         char *curr_class =
             doc_get_classe(ht_get(indice_get_documentos(idx), doc_nome));
@@ -74,7 +74,6 @@ void relatorio_palavras(Indice *idx, char *query) {
         } else
             *(freq_ptr) += 1;
     }
-    free(saveptr);
 
     Lista *lista_classes = ht_to_list(ht_classes);
 
