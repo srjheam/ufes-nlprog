@@ -53,6 +53,8 @@ void relatorio_palavras(Indice *idx, char *query) {
     }
     printf("\n");
 
+    lista_dispose(refdocs);
+
     // frequencia da palavra por classe
     //  Hashtable <string, int>
     HashTable *ht_classes =
@@ -75,6 +77,9 @@ void relatorio_palavras(Indice *idx, char *query) {
     free(saveptr);
 
     Lista *lista_classes = ht_to_list(ht_classes);
+
+    ht_dispose(ht_classes);
+
     lista_ordena(lista_classes, (cmp_fn)cmp_qtd_classes);
 
     printf("Frequência por classe:\n");
@@ -84,6 +89,8 @@ void relatorio_palavras(Indice *idx, char *query) {
 
         printf("Classe: %s - Frequência: %d\n", classe, freq);
     }
+
+    lista_dispose(lista_classes);
 }
 
 void relatorio_documentos(Indice *idx) {
@@ -110,4 +117,6 @@ void relatorio_documentos(Indice *idx) {
                    kvp_get_value(lista_get_elemento(docs, i)))),
                doc_get_classe(kvp_get_value(lista_get_elemento(docs, i))));
     }
+
+    lista_dispose(docs);
 }
