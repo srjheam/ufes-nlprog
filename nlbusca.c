@@ -6,6 +6,7 @@
 #include "exception.h"
 #include "hash_table.h"
 #include "parser.h"
+#include "relatorio.h"
 #include "repo_indices.h"
 #include "repo_noticias.h"
 
@@ -49,12 +50,25 @@ int main(int argc, char const *argv[]) {
         doc_dispose(inNoticia);
         break;
 
-    case 'f':
+    case 'f':;
+        printf("Informe uma palavra: \n");
 
+        char *query = NULL;
+        size_t len = 0;
+        int strlen = 0;
+        if ((strlen = getline(&query, &len, stdin)) == -1)
+            exception_throw_failure("Erro ao ler a palavra.\n");
+
+        if (query[strlen - 1] == '\n')
+            query[strlen - 1] = '\0';
+
+        relatorio_palavras(idx, query);
+
+        free(query);
         break;
 
     case 'l':
-
+        relatorio_documentos(idx);
         break;
 
     default:
