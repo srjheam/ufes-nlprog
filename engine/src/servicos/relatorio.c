@@ -18,7 +18,7 @@ static int cmp_qtd_documentos(KeyValuePair *x, KeyValuePair *y){
 }
 
 static int cmp_qtd_classes(KeyValuePair *x, KeyValuePair *y){
-    return (int *)kvp_get_value(y) - (int *)kvp_get_value(x);
+    return *(int *)kvp_get_value(y) - *(int *)kvp_get_value(x);
 }
 
 static int cmp_len_doc(KeyValuePair *x, KeyValuePair *y){
@@ -44,8 +44,8 @@ void relatorio_palavras(Indice *idx, char *query){
     lista_ordena(refdocs, (cmp_fn)cmp_qtd_documentos);
 
     printf("10 documentos em que a palavra mais aparece:\n");
-    for(int i=0;i<10;i++){
-        printf("%d. %s\n", i, refdoc_get_documento(lista_get_elemento(refdocs, i)));
+    for(int i=0;i<10 && i < lista_get_quantidade(refdocs);i++){
+        printf("%d. %s %d\n", i, refdoc_get_documento(kvp_get_value(lista_get_elemento(refdocs, i))), refdoc_get_freq(kvp_get_value(lista_get_elemento(refdocs, i))));
     }
     printf("\n");
 
@@ -58,11 +58,13 @@ void relatorio_palavras(Indice *idx, char *query){
         char *doc_nome = refdoc_get_documento(kvp_get_value(curr_refdoc));
         char *curr_class = doc_get_classe(ht_get(indice_get_documentos(idx), doc_nome));
         
-        if(ht_get(ht_classes, curr_class) == NULL)
-        ht_add(ht_classes, curr_class, 0);
-
         int *freq_ptr = ht_get(ht_classes, curr_class);
-        *(freq_ptr)+= 1;
+        if(freq_ptr == NULL) {
+            int freq = 1;
+            ht_add(ht_classes, curr_class, &freq);
+        }
+        else
+            *(freq_ptr)+= 1;
     }
     free(saveptr);
 
@@ -71,9 +73,10 @@ void relatorio_palavras(Indice *idx, char *query){
 
     printf("Frequência por classe:\n");
     for(int i = 0; i < lista_get_quantidade(lista_classes); i++){
-        printf("Classe: %s - Frequência: %d\n",
-                            (char *)kvp_get_key(lista_get_elemento(lista_classes, i)),
-                            *(int *)kvp_get_value(lista_get_elemento(lista_classes, i)));
+        const char *classe = kvp_get_key(lista_get_elemento(lista_classes, i));
+        int freq = *(int *)kvp_get_value(lista_get_elemento(lista_classes, i));
+
+        printf("Classe: %s - Frequência: %d\n", classe, freq);
     }
 
 }
