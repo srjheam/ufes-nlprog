@@ -352,6 +352,11 @@ void repoidx_salvaIndice(Indice *idx, const char *arquivo) {
 
 Indice *repoidx_carregaIndice(const char *arquivo) {
     FILE *fbin = fopen(arquivo, "rb");
+    if (fbin == NULL) {
+        exception_throw_failure("Erro ao abrir arquivo de indice - em "
+                                "engine/repositorios/"
+                                "repo_indices.repoidx_carregaIndice");
+    }
 
     // HashTable<string, Documento>
     HashTable *idxDocumentos = repoidx_carregaIndiceDocumentos(fbin);
