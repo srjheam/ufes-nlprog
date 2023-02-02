@@ -23,8 +23,8 @@ static int cmp_qtd_classes(KeyValuePair *x, KeyValuePair *y) {
 }
 
 static int cmp_len_doc(KeyValuePair *x, KeyValuePair *y) {
-    return ht_get_qty(doc_get_refPalavras(kvp_get_value(y))) -
-           ht_get_qty(doc_get_refPalavras(kvp_get_value(x)));
+    return ht_get_length(doc_get_refPalavras(kvp_get_value(y))) -
+           ht_get_length(doc_get_refPalavras(kvp_get_value(x)));
 }
 
 void relatorio_palavras(Indice *idx, char *query) {
@@ -38,7 +38,7 @@ void relatorio_palavras(Indice *idx, char *query) {
 
     // numero total de documentos
     printf("Quantidade de documentos em que a palavra está presente: %d\n\n",
-           ht_get_qty(refs_docs));
+           ht_get_length(refs_docs));
 
     // os 10 em que ela mais aparece
     Lista *refdocs = ht_to_list(refs_docs);
@@ -101,7 +101,7 @@ void relatorio_documentos(Indice *idx) {
     for (int i = 0; i < 10 && i < lista_get_quantidade(docs); i++) {
         printf("%d. Titulo: %s - Palavras: %d - Classe: %s\n", i,
                doc_get_arquivo(kvp_get_value(lista_get_elemento(docs, i))),
-               ht_get_qty(doc_get_refPalavras(
+               ht_get_length(doc_get_refPalavras(
                    kvp_get_value(lista_get_elemento(docs, i)))),
                doc_get_classe(kvp_get_value(lista_get_elemento(docs, i))));
     }
@@ -113,7 +113,7 @@ void relatorio_documentos(Indice *idx) {
     for (int i = n - 1; (n - i + 1) < 10 && i >= 0; i--) {
         printf("%d. Titulo: %s - Palavras: %d - Classe: %s\n", i,
                doc_get_arquivo(kvp_get_value(lista_get_elemento(docs, i))),
-               ht_get_qty(doc_get_refPalavras(
+               ht_get_length(doc_get_refPalavras(
                    kvp_get_value(lista_get_elemento(docs, i)))),
                doc_get_classe(kvp_get_value(lista_get_elemento(docs, i))));
     }
