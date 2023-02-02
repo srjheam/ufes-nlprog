@@ -1,3 +1,16 @@
+/**
+ * @file hash_table.c
+ * @brief Generic, openly addressable, dynamically resizable hash table
+ * implementation
+ * @see https://en.wikipedia.org/wiki/Hash_table#Collision_resolution
+ * @version 0.1
+ * @date 2023-02-01
+ *
+ * @copyright Copyright (c) 2023
+ *
+ *
+ */
+
 #ifndef _HT_
 #define _HT_
 
@@ -10,16 +23,17 @@ typedef struct tHashTable HashTable;
 /**
  * @brief Inicializa dinamicamente uma @ref HashTable
  *
- * @param copiaChave Uma função copiadora da chave da @p ht
- * @param copiaValor Uma função copiadora do valor da @p ht
- * @param comparadorChaves Uma função comparadora das chaves da @ref HashTable
- * @param liberaChaves Uma função destrutora das chaves da @ref HashTable
- * @param liberaValores Uma função destrutora dos valores da @ref HashTable
+ * @param hashKey Uma função hash da chave da @p ht
+ * @param cpyKey Uma função copiadora da chave da @p ht
+ * @param cpyValue Uma função copiadora do valor da @p ht
+ * @param cmpKey Uma função comparadora das chaves da @ref HashTable
+ * @param disposeKey Uma função destrutora das chaves da @ref HashTable
+ * @param disposeValue Uma função destrutora dos valores da @ref HashTable
  * @return HashTable* Uma nova instancia de @ref HashTable
  */
-HashTable *ht_init(cpy_fn copiaChave, cpy_fn copiaValor,
-                   cmp_fn comparadorChaves, free_fn liberaChaves,
-                   free_fn liberaValores);
+HashTable *ht_init(hash_fn hashKey, cpy_fn cpyKey, cpy_fn cpyValue,
+                   cmp_fn cmpKey, free_fn disposeKey,
+                   free_fn disposeValue);
 
 /**
  * @brief Libera o @p ht e todos os seus elementos da memória em que foram
@@ -40,7 +54,7 @@ void ht_add(HashTable *ht, const void *chave, const void *value);
 
 void *ht_get(HashTable *ht, const void *chave);
 
-int ht_get_qty(HashTable *ht);
+size_t ht_get_qty(HashTable *ht);
 
 /**
  * @brief Adquire todos os pares chave valor dessa @p ht
@@ -50,7 +64,7 @@ int ht_get_qty(HashTable *ht);
  */
 Lista *ht_to_list(HashTable *ht);
 
-KeyValuePair *ht_iter(HashTable *ht, int *saveptr);
+KeyValuePair *ht_iter(const HashTable *ht, void **saveptr);
 
 HashTable *ht_cpy(const HashTable *ht);
 
