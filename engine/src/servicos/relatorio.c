@@ -90,9 +90,9 @@ void relatorio_documentos(Indice *idx) {
     Lista *docs = ht_to_list(indice_get_documentos(idx));
     lista_ordena(docs, (cmp_fn)cmp_len_doc);
 
-    printf("Documentos mais longos:\n");
-    for (int i = 0; i < lista_get_quantidade(docs); i++) {
-        printf("%d. Titulo: %s - Palavras: %d - Classe: %s", i,
+    printf("Os 10 documentos mais longos:\n");
+    for (int i = 0; i < 10 && i < lista_get_quantidade(docs); i++) {
+        printf("%d. Titulo: %s - Palavras: %d - Classe: %s\n", i,
                doc_get_arquivo(kvp_get_value(lista_get_elemento(docs, i))),
                ht_get_qty(doc_get_refPalavras(
                    kvp_get_value(lista_get_elemento(docs, i)))),
@@ -100,9 +100,11 @@ void relatorio_documentos(Indice *idx) {
     }
     printf("\n");
 
-    printf("Documentos mais curtos:\n");
-    for (int i = lista_get_quantidade(docs); i >= 0; i--) {
-        printf("%d. Titulo: %s - Palavras: %d - Classe: %s", i,
+    printf("Os 10 documentos mais curtos:\n");
+
+    int n = lista_get_quantidade(docs);
+    for (int i = n - 1; (n - i + 1) < 10 && i >= 0; i--) {
+        printf("%d. Titulo: %s - Palavras: %d - Classe: %s\n", i,
                doc_get_arquivo(kvp_get_value(lista_get_elemento(docs, i))),
                ht_get_qty(doc_get_refPalavras(
                    kvp_get_value(lista_get_elemento(docs, i)))),
