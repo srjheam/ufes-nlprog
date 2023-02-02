@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "buscador.h"
 #include "classificador.h"
 #include "exception.h"
 #include "hash_table.h"
@@ -33,6 +34,26 @@ int main(int argc, char const *argv[]) {
     system("clear");
     switch (op) {
     case 'q':
+        printf("Informe sua busca: \n");
+
+        char *query = NULL;
+        size_t len = 0;
+        int strlen = 0;
+        if ((strlen = getline(&query, &len, stdin)) == -1)
+            exception_throw_failure("Erro ao ler a palavra.\n");
+
+        if (query[strlen - 1] == '\n')
+            query[strlen - 1] = '\0';
+
+        Lista *relevantes = buscador_buscaNoticias(query, idx);
+
+        printf("\n\nAs 10 notícias mais relevantes:\n");
+        for (int i = 0; i < 10 && i < lista_get_quantidade(relevantes); i++) {
+            KeyValuePair *kvp = lista_get_elemento(relevantes, i);
+            printf("%d. %s (%.2f)\n", i, (char *)kvp_get_key(kvp), *(float *)kvp_get_value(kvp));
+        }
+
+        lista_dispose(relevantes);
 
         break;
 
@@ -53,9 +74,9 @@ int main(int argc, char const *argv[]) {
     case 'f':;
         printf("Informe uma palavra: \n");
 
-        char *query = NULL;
-        size_t len = 0;
-        int strlen = 0;
+        query = NULL;
+        len = 0;
+        strlen = 0;
         if ((strlen = getline(&query, &len, stdin)) == -1)
             exception_throw_failure("Erro ao ler a palavra.\n");
 
