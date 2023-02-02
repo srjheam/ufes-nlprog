@@ -131,7 +131,7 @@ Lista *ht_to_list(HashTable *ht) {
     void *saveptr = NULL;
     KeyValuePair *kvp = NULL;
     while ((kvp = ht_iter(ht, &saveptr)) != NULL)
-        lista_push(lista, kvp);
+        lista_push(lista, kvp_cpy(kvp));
 
     return lista;
 }
