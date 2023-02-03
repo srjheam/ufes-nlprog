@@ -19,12 +19,10 @@ static int anonfn_sortKvpStrIntDesc(const KeyValuePair *a,
     return *(int *)kvp_get_value(b) - *(int *)kvp_get_value(a);
 }
 
-char *classificador_classificaDocumento(Documento *documento, Indice *idx,
-                                        int k) {
+char *classificador_classificaDocumento(Documento *documento,
+                                        HashTable *docsIdx, int k) {
     char *nomeDocumento = doc_get_arquivo(documento);
 
-    // HashTable<string, Documento>
-    HashTable *docsIdx = indice_get_documentos(idx);
     ht_insert(docsIdx, doc_get_arquivo(documento), documento);
 
     // HashTable<string, Palavra>
@@ -34,15 +32,15 @@ char *classificador_classificaDocumento(Documento *documento, Indice *idx,
 
     // HashTable<string, float>
     HashTable *similaridadeDocumentos =
-        ht_init((hash_fn)hashStr, (cpy_fn)strdup, (cpy_fn)floatdup, (cmp_fn)strcmp, (free_fn)free,
-                (free_fn)free);
+        ht_init((hash_fn)hashStr, (cpy_fn)strdup, (cpy_fn)floatdup,
+                (cmp_fn)strcmp, (free_fn)free, (free_fn)free);
     // Associa identificador de um documento no indice com a similaridade entre
     // ele e o ducumento a ser classificado
 
     float moduloDocumento = 0;
     // KeyValuePair<string, RefPalavra>
     KeyValuePair *currPalavra = NULL;
-    void* saveptr = NULL;
+    void *saveptr = NULL;
     while ((currPalavra = ht_iter(doc_get_refPalavras(documento), &saveptr)) !=
            NULL) {
         char *palavra = refpalavra_get_palavra(kvp_get_value(currPalavra));
@@ -114,8 +112,8 @@ char *classificador_classificaDocumento(Documento *documento, Indice *idx,
 
     // HashTable<string, int>
     HashTable *freqClasseDocumentos =
-        ht_init((hash_fn)hashStr, (cpy_fn)strdup, (cpy_fn)intdup, (cmp_fn)strcmp, (free_fn)free,
-                (free_fn)free);
+        ht_init((hash_fn)hashStr, (cpy_fn)strdup, (cpy_fn)intdup,
+                (cmp_fn)strcmp, (free_fn)free, (free_fn)free);
     // Agrega a frequencia das classes dos k documentos mais similares
 
     for (int i = 0; i < k && i < lista_get_quantidade(listaSimilaridade); i++) {
