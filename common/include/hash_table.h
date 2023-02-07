@@ -16,6 +16,7 @@
 
 #include "key_value_pair.h"
 #include "lista.h"
+#include "linked_list.h"
 #include "types.h"
 
 typedef struct tHashTable HashTable;
@@ -42,6 +43,14 @@ HashTable *ht_init(hash_fn hashKey, cpy_fn cpyKey, cpy_fn cpyValue,
  * @param ht Uma instancia de @ref HashTable
  */
 void ht_dispose(HashTable *ht);
+
+/**
+ * @brief Retorna uma lista com todas as chaves da @p ht
+ * 
+ * @param ht Uma instancia de @ref HashTable
+ * @return LinkedList* Uma nova instancia de @ref LinkedList de todas as chaves da @p ht
+ */
+LinkedList *ht_keys(HashTable *ht);
 
 /**
  * @brief Acessa o valor da @p ht pelo sua chave e armazena @p value nele

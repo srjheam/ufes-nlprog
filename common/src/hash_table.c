@@ -2,7 +2,6 @@
 #include <stdlib.h>
 
 #include "exception.h"
-#include "linked_list.h"
 
 #include "hash_table.h"
 
@@ -61,6 +60,19 @@ void ht_dispose(HashTable *ht) {
     free(ht->items);
 
     free(ht);
+}
+
+LinkedList *ht_keys(HashTable *ht) {
+    // LinkedList<void>
+    LinkedList *keys = ll_init((cpy_fn)ht->cpyKey, (free_fn)ht->disposeKey);
+
+    void *saveptr = NULL;
+    KeyValuePair *kvp = NULL;
+    while ((kvp = ht_iter(ht, &saveptr)) != NULL) {
+        ll_append(keys, ht->cpyKey(kvp_get_key(kvp)));
+    }
+
+    return keys;
 }
 
 static size_t ht_hash(const HashTable *ht, const void *chave) {

@@ -70,7 +70,7 @@ int main(int argc, char const *argv[]) {
         Documento *inNoticia =
             reponoticias_carregaDocumento(stdin, "input", "tbd");
 
-        char *classe = classificador_classificaDocumento(inNoticia, idx, k);
+        char *classe = classificador_classificaDocumento(inNoticia, indice_get_documentos(idx), k);
 
         printf("\n\nA notícia pertence à classe '%s'\n", classe);
 
