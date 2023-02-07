@@ -18,10 +18,10 @@ static int cmp_tfidf_listanoticias(const KeyValuePair *x,
     return *(float *)kvp_get_value(y) * 1e6 - *(float *)kvp_get_value(x) * 1e6;
 }
 
-Lista *buscador_buscaNoticias(char *query, Indice *idx) {
+Lista *buscador_buscaNoticias(char *query, HashTable *idxPalavras) {
     // HashTable <string, float>
     HashTable *documentos =
-        ht_init((hash_fn)hashStr, (cpy_fn)strdup, (cpy_fn)intdup,
+        ht_init((hash_fn)hashStr, (cpy_fn)strdup, (cpy_fn)floatdup,
                 (cmp_fn)strcmp, (free_fn)free, (free_fn)free);
 
     char *saveptr = NULL, *token = NULL;
@@ -31,7 +31,7 @@ Lista *buscador_buscaNoticias(char *query, Indice *idx) {
         if (token == NULL)
             break;
 
-        Palavra *pal = ht_get(indice_get_palavras(idx), token);
+        Palavra *pal = ht_get(idxPalavras, token);
 
         if (pal == NULL)
             continue;
@@ -45,7 +45,7 @@ Lista *buscador_buscaNoticias(char *query, Indice *idx) {
             char *titulo = refdoc_get_documento(refdoc);
 
             if (ht_get(documentos, titulo) == NULL) {
-                int relevancia = 0;
+                float relevancia = 0;
                 ht_insert(documentos, titulo, &relevancia);
             }
 
