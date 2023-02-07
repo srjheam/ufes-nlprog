@@ -13,6 +13,8 @@ struct tKeyValuePair {
 
     free_fn disposeKey;
     free_fn disposeValue;
+
+    bool removed;
 };
 
 KeyValuePair *kvp_init(const void *chave, const void *valor, cpy_fn cpyKey,
@@ -24,6 +26,8 @@ KeyValuePair *kvp_init(const void *chave, const void *valor, cpy_fn cpyKey,
 
     par->chave = cpyKey(chave);
     par->valor = cpyValue(valor);
+
+    par->removed = false;
 
     par->cpyKey = cpyKey;
     par->cpyValue = cpyValue;
@@ -50,10 +54,16 @@ void kvp_set_value(KeyValuePair *pair, const void *value) {
     pair->valor = pair->cpyValue(value);
 }
 
+bool kvp_get_is_removed(const KeyValuePair *pair) { return pair->removed; }
+
+void kvp_set_removed(KeyValuePair *pair, bool removed) { pair->removed = removed; }
+
 KeyValuePair *kvp_cpy(KeyValuePair *kvp) {
     KeyValuePair *cpy =
         kvp_init(kvp->chave, kvp->valor, kvp->cpyKey, kvp->cpyValue,
                  kvp->disposeKey, kvp->disposeValue);
+
+    cpy->removed = kvp->removed;
 
     return cpy;
 }

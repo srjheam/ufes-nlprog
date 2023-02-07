@@ -23,13 +23,8 @@ HashTable *testador_geraMatrizConfusao(Indice *idxBase, Indice *idxTest, int k,
            NULL) {
         Documento *doc = kvp_get_value(curr_doc);
 
-        // HashTable <string, Documento>
-        HashTable *idxBaseNDocs = ht_cpy(indice_get_documentos(idxBase));
-
         char *predictCls =
-            classificador_classificaDocumento(doc, idxBaseNDocs, k);
-
-        ht_dispose(idxBaseNDocs);
+            classificador_classificaDocumento(doc, indice_get_documentos(idxBase), k);
 
         char *trueCls = doc_get_classe(doc);
 

@@ -30,6 +30,8 @@ char *classificador_classificaDocumento(Documento *documento,
     // Atualiza o calculo do indice de palavras com a entrada do novo documento
     // no corpus
 
+    ht_remove(docsIdx, doc_get_arquivo(documento));
+
     // HashTable<string, float>
     HashTable *similaridadeDocumentos =
         ht_init((hash_fn)hashStr, (cpy_fn)strdup, (cpy_fn)floatdup,
@@ -60,9 +62,6 @@ char *classificador_classificaDocumento(Documento *documento,
     while ((curr = ht_iter(docsIdx, &saveptr)) != NULL) {
         Documento *doc = kvp_get_value(curr);
         char *currDocNome = doc_get_arquivo(doc);
-
-        if (strcmp(currDocNome, nomeDocumento) == 0)
-            continue;
 
         float similaridadeDoc = 0;
         float normaDoc = 0;

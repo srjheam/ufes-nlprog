@@ -14,7 +14,9 @@
 struct tHashTable {
     KeyValuePair **items; // Array<Pointer<KeyValuePair<void, void>>>
 
-    size_t size; // how many items can be stored
+    size_t size;   // how many items can be stored
+    size_t scount; // how many items are stored
+    size_t length; // how many items are there
 
     LinkedList *iterables; // LinkedList<KeyValuePair<void, void>>
 
@@ -38,6 +40,8 @@ HashTable *ht_init(hash_fn hashkey, cpy_fn cpyKey, cpy_fn cpyValue,
     ht->items = calloc(HT_INITIAL_SIZE, sizeof *ht->items);
 
     ht->size = HT_INITIAL_SIZE;
+    ht->scount = 0;
+    ht->length = 0;
 
     ht->iterables = ll_init((cpy_fn)kvp_cpy, (free_fn)kvp_dispose);
 
@@ -79,26 +83,48 @@ static size_t ht_hash(const HashTable *ht, const void *chave) {
     return ht->hashKey(chave) & (ht->size - 1);
 }
 
-static void ht_grow(HashTable *ht) {
-    if (ht_get_length(ht) >= 13 * (ht->size >> 4)) {
-        ht->size *= HT_GROWTH_FACTOR;
-        KeyValuePair **nitems = calloc(ht->size, sizeof *ht->items);
-        if (!nitems)
-            exception_throw_OutOfMemory("HashTable grow failed");
+static void ht_resize(HashTable *ht, size_t nsize) {
+    ht->size = nsize;
 
-        void *saveptr = NULL;
-        KeyValuePair *kvp = NULL;
-        while ((kvp = ht_iter(ht, &saveptr)) != NULL) {
-            size_t i = ht_hash(ht, kvp_get_key(kvp));
+    KeyValuePair **nitems = calloc(ht->size, sizeof *ht->items);
+    if (!nitems)
+        exception_throw_OutOfMemory("HashTable grow failed");
 
-            while (nitems[i] != NULL)
-                i = (i + 1) & (ht->size - 1);
+    LinkedList *niterables = ll_init((cpy_fn)kvp_cpy, (free_fn)kvp_dispose);
 
-            nitems[i] = kvp;
+    void *saveptr = NULL;
+    KeyValuePair *kvp = NULL;
+    while ((kvp = ll_iter(ht->iterables, &saveptr)) != NULL) {
+        if (kvp_get_is_removed(kvp)) {
+            kvp_dispose(kvp);
+            continue;
         }
 
-        free(ht->items);
-        ht->items = nitems;
+        size_t i = ht_hash(ht, kvp_get_key(kvp));
+
+        while (nitems[i] != NULL)
+            i = (i + 1) & (ht->size - 1);
+
+        nitems[i] = kvp;
+
+        ll_append(niterables, kvp);
+    }
+
+    free(ht->items);
+    ll_i_dispose(ht->iterables);
+
+    ht->items = nitems;
+    ht->iterables = niterables;
+
+    ht->scount = ht_get_length(ht);
+}
+
+static void ht_grow(HashTable *ht) {
+    if (ht->scount >= 13 * (ht->size >> 4)) {
+        if (ht_get_length(ht) >= 7 * (ht->size >> 4))
+            ht_resize(ht, ht->size << 1);
+        else
+            ht_resize(ht, ht->size);
     }
 }
 
@@ -118,8 +144,46 @@ void ht_insert(HashTable *ht, const void *chave, const void *value) {
         ht->items[i] = novo;
 
         ll_append(ht->iterables, novo);
-    } else
+
+        ht->scount++;
+        ht->length++;
+    } else {
+        if (kvp_get_is_removed(ht->items[i])) {
+            ht->length++;
+            kvp_set_removed(ht->items[i], false);
+        }
+
         kvp_set_value(ht->items[i], value);
+    }
+}
+
+static void ht_shrink(HashTable *ht) {
+    if (ht->size <= HT_INITIAL_SIZE)
+        return;
+
+    if (ht_get_length(ht) <= 6 * (ht->size >> 5)) {
+        ht_resize(ht, ht->size >> 1);
+    }
+}
+
+const KeyValuePair *ht_remove(HashTable *ht, const void *chave) {
+    ht_shrink(ht);
+
+    size_t i = ht_hash(ht, chave);
+
+    while (ht->items[i] != NULL &&
+           !ht->cmpKey(kvp_get_key(ht->items[i]), chave) == 0)
+        i = (i + 1) & (ht->size - 1);
+
+    if (ht->items[i] == NULL) {
+        return NULL;
+    } else {
+        kvp_set_removed(ht->items[i], true);
+
+        ht->length--;
+
+        return ht->items[i];
+    }
 }
 
 void *ht_get(HashTable *ht, const void *chave) {
@@ -129,13 +193,13 @@ void *ht_get(HashTable *ht, const void *chave) {
            !ht->cmpKey(kvp_get_key(ht->items[i]), chave) == 0)
         i = (i + 1) & (ht->size - 1);
 
-    if (ht->items[i] == NULL)
+    if (ht->items[i] == NULL || kvp_get_is_removed(ht->items[i]))
         return NULL;
 
     return kvp_get_value(ht->items[i]);
 }
 
-size_t ht_get_length(HashTable *ht) { return ll_get_length(ht->iterables); }
+size_t ht_get_length(HashTable *ht) { return ht->length; }
 
 Lista *ht_to_list(const HashTable *ht) {
     Lista *lista = lista_init((cpy_fn)kvp_cpy, (free_fn)kvp_dispose);
@@ -154,9 +218,6 @@ HashTable *ht_cpy(const HashTable *ht) {
 
     cpy->size = ht->size;
 
-    ll_dispose(cpy->iterables);
-    cpy->iterables = ll_init((cpy_fn)kvp_cpy, (free_fn)kvp_dispose);
-
     free(cpy->items);
     cpy->items = calloc(ht->size, sizeof *ht->items);
     if (!cpy->items)
@@ -174,11 +235,18 @@ HashTable *ht_cpy(const HashTable *ht) {
 
         cpy->items[i] = kvpCpy;
         ll_append(cpy->iterables, kvpCpy);
+        cpy->length++;
     }
 
     return cpy;
 }
 
 KeyValuePair *ht_iter(const HashTable *ht, void **saveptr) {
-    return ll_iter(ht->iterables, saveptr);
+    KeyValuePair *v = NULL;
+
+    while ((v = ll_iter(ht->iterables, saveptr)) != NULL &&
+           kvp_get_is_removed(v))
+        ;
+
+    return v;
 }

@@ -27,6 +27,10 @@ LinkedList *ll_init(cpy_fn cpyValue, free_fn disposeValue) {
     return list;
 }
 
+void ll_i_dispose(LinkedList *list) {
+    free(list);
+}
+
 void ll_dispose(LinkedList *list) {
     Node *curr = list->head;
     while (curr != NULL) {

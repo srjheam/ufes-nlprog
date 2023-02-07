@@ -61,6 +61,8 @@ LinkedList *ht_keys(HashTable *ht);
  */
 void ht_insert(HashTable *ht, const void *chave, const void *value);
 
+const KeyValuePair *ht_remove(HashTable *ht, const void *chave);
+
 void *ht_get(HashTable *ht, const void *chave);
 
 size_t ht_get_length(HashTable *ht);

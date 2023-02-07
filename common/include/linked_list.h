@@ -7,6 +7,8 @@ typedef struct tLinkedList LinkedList;
 
 LinkedList *ll_init(cpy_fn cpyValue, free_fn disposeValue);
 
+void ll_i_dispose(LinkedList *list);
+
 void ll_dispose(LinkedList *list);
 
 size_t ll_get_length(LinkedList *list);
