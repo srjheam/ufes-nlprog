@@ -26,7 +26,7 @@ int main(int argc, char const *argv[]) {
 
     HashTable *matriz = testador_geraMatrizConfusao(idxBase, idxTest, k, &accuracy);
 
-    repoexp_salvaMatrizConfusaoCsv(argv[4], matriz, accuracy);
+    repoexp_salvaMatrizConfusaoTxt(argv[4], matriz, accuracy);
 
     ht_dispose(matriz);
 

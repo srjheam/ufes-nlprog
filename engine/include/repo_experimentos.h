@@ -6,4 +6,7 @@
 void repoexp_salvaMatrizConfusaoCsv(const char *filename, HashTable *matriz,
                                     float accuracy);
 
+void repoexp_salvaMatrizConfusaoTxt(const char *filename, HashTable *matriz,
+                                    float accuracy);
+
 #endif // _REPO_EXPERIMENTOS_
