@@ -4,6 +4,6 @@
 #include "lista.h"
 #include "indice.h"
 
-Lista *buscador_buscaNoticias(char *query, Indice *idx);
+Lista *buscador_buscaNoticias(char *query, HashTable *idxPalavras);
 
 #endif
