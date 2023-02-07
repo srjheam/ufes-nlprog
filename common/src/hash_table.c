@@ -137,7 +137,7 @@ void *ht_get(HashTable *ht, const void *chave) {
 
 size_t ht_get_length(HashTable *ht) { return ll_get_length(ht->iterables); }
 
-Lista *ht_to_list(HashTable *ht) {
+Lista *ht_to_list(const HashTable *ht) {
     Lista *lista = lista_init((cpy_fn)kvp_cpy, (free_fn)kvp_dispose);
 
     void *saveptr = NULL;
