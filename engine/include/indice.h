@@ -13,4 +13,10 @@ HashTable *indice_get_palavras(Indice *idx);
 
 HashTable *indice_get_documentos(Indice *idx);
 
+const HashTable *indice_get_const_palavras(const Indice *idx);
+
+const HashTable *indice_get_const_documentos(const Indice *idx);
+
+Indice *indice_cpy(const Indice *idx);
+
 #endif

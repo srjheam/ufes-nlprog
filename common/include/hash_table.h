@@ -71,7 +71,7 @@ size_t ht_get_length(HashTable *ht);
  * @param ht Uma instancia de @ref HashTable
  * @return Lista* Uma @ref Lista* de @ref KeyValuePair*
  */
-Lista *ht_to_list(HashTable *ht);
+Lista *ht_to_list(const HashTable *ht);
 
 KeyValuePair *ht_iter(const HashTable *ht, void **saveptr);
 

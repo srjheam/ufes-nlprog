@@ -93,8 +93,8 @@ void relatorio_palavras(Indice *idx, char *query) {
     lista_dispose(lista_classes);
 }
 
-void relatorio_documentos(Indice *idx) {
-    Lista *docs = ht_to_list(indice_get_documentos(idx));
+void relatorio_documentos(const Indice *idx) {
+    Lista *docs = ht_to_list(indice_get_const_documentos(idx));
     lista_ordena(docs, (cmp_fn)cmp_len_doc);
 
     printf("Os 10 documentos mais longos:\n");
